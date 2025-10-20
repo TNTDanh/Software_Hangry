@@ -52,35 +52,41 @@
     border-radius: 4px;
     cursor: pointer;
 }
-.cart-promocode{
-    flex: 1;
+.cart-promocode {
+  display: flex;
+  justify-content: center;   /* Căn giữa ngang */
+  align-items: center;       /* Căn giữa dọc nếu cần */
+  text-align: center;        /* Căn chữ giữa */
+  background-color: #fff4e6; /* Nền nhẹ màu cam nhạt */
+  border-radius: 16px;
+  padding: 25px;
+  margin: 30px auto;
+  width: 90%;
+  max-width: 600px;          /* Giới hạn khung cho cân đối */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
-.cart-promocode p{
-    color: #555;
+
+.thankyou-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
 }
-.cart-promocode-input{
-    margin-top: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #eaeaea;
-    border-radius: 4px;
+
+.promocodep {
+  color: #ff7a00;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
 }
-.cart-promocode-input input{
-    background: transparent;
-    border: none;
-    outline: none;
-    padding-left: 10px;
+
+.promocode-sub {
+  color: #555;
+  font-size: 15px;
+  margin: 0;
+  line-height: 1.5;
 }
-.cart-promocode-input button{
-    width: max(10vw, 150px);
-    padding: 12px 5px;
-    background-color: black;
-    border: none;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-}
+
 
 
 :root .cart-items-title {
@@ -94,7 +100,7 @@
 
 
 :root .promocodep{
-    color: white;
+    color: rgb(26, 25, 25);
 }
 .lightcolors .promocodep{
     color: #555555

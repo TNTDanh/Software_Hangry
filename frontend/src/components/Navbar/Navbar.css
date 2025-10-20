@@ -242,6 +242,35 @@
     color: #49557e; 
 }
 
+.scroll-to-top {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #ff7a00; /* màu cam */
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+
+  /* Căn giữa icon */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.scroll-to-top:hover {
+  background-color: #ff9800;
+  transform: scale(1.1);
+}
+
+
 
 
 
