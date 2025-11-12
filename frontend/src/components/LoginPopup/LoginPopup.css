@@ -1,89 +1,161 @@
-.login-popup{
-    position: absolute;
-    z-index: 1;
-    width: 100%;
-    height: 100%;
-    background-color: #00000090;
-    display: grid;
+/* Overlay: tối + blur, luôn phủ trên cùng */
+.login-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.66);
+  backdrop-filter: blur(4px);
+  display: grid;
 }
 
-:root .login-popup-title{
-    color: white;
+/* Khung popup: nền trắng, chữ đen (không phụ thuộc theme) */
+.login-popup-container {
+  place-self: center;
+  width: min(92vw, 420px);
+  max-height: 90vh;
+  overflow: auto;
+
+  color: #111 !important;
+  background: #fff !important;
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 22px 24px;
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.24);
+  animation: fadeIn 0.35s ease;
 }
 
-.lightcolors .login-popup-title{
-    color: black;
+/* Tiêu đề */
+.login-popup-title {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr; /* trái | giữa | phải */
+  align-items: center;
+  margin: 0 0 6px 0;
+  color: #111 !important;
+}
+.login-popup-title h2 {
+  font-style: italic;
+  text-transform: uppercase;
+  grid-column: 2; /* ở giữa */
+  justify-self: center;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 900;
+}
+.login-popup-title img {
+  grid-column: 3; /* bên phải */
+  justify-self: end;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
 }
 
-
-:root .login-popup-container {
-    background-color: var(--body-color);
+/* Inputs */
+.login-popup-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.login-popup-inputs input {
+  outline: none;
+  border: 1px solid #ddd;
+  background: #fff !important;
+  color: #111 !important;
+  padding: 10px 12px;
+  border-radius: 8px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.login-popup-inputs input::placeholder {
+  color: #9ca3af;
+}
+.login-popup-inputs input:focus {
+  border-color: tomato;
+  box-shadow: 0 0 0 3px rgba(255, 99, 71, 0.18);
 }
 
+/* Nút hành động */
+.login-popup-container button {
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  color: #fff;
+  background: linear-gradient(180deg, #ff7256, #ff6347);
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(255, 99, 71, 0.35);
+  transition: filter 0.2s ease, transform 0.05s ease, box-shadow 0.2s ease;
+}
+.login-popup-container button:hover {
+  filter: brightness(0.98);
+  box-shadow: 0 8px 20px rgba(255, 99, 71, 0.42);
+}
+.login-popup-container button:active {
+  transform: translateY(1px);
+}
+
+/* Điều kiện & liên kết */
+.login-popup-condition {
+  display: flex;
+  align-items: start;
+  gap: 8px;
+  margin-top: -6px;
+  color: #444;
+}
+.login-popup-condition input {
+  margin-top: 4px;
+}
+
+.login-popup p span {
+  color: tomato;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.login-switch {
+  text-align: center;
+  margin-top: 6px;
+}
+.login-switch p {
+  margin: 0;
+  color: #444;
+  font-weight: 600;
+}
+.login-switch p span {
+  color: tomato;
+  font-weight: 900;
+  cursor: pointer;
+  display: inline-block;
+  margin-left: 6px;
+}
+
+/* Ghi đè các rule phụ thuộc theme cũ (nếu có) */
+:root .login-popup-title,
+.lightcolors .login-popup-title {
+  color: inherit;
+}
+:root .login-popup-container,
 .lightcolors .login-popup-container {
-    background-color: white; 
+  background: inherit;
 }
 
-.continuee{
-    position: relative;
-    top: 4px;
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
-
-.login-popup-container{
-    place-self: center;
-    width: max(23vw, 330px);
-    color: #808080;
-    background-color: white;
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-    padding: 25px 30px;
-    border-radius: 8px;
-    font-size: 14px;
-    animation: fadeIn 0.5s;
-}
-.login-popup-title{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: black;   
-}
-.login-popup-title img{
-    width: 16px;
-    cursor: pointer;
-}
-.login-popup-inputs{
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-.login-popup-inputs input{
-    outline: none;
-    border: 1px solid #c9c9c9;
-    padding: 10px;
-    border-radius: 4px;
-}
-.login-popup-container button{
-    border: none;
-    padding: 10px;
-    border-radius: 4px;
-    color: white;
-    background-color: tomato;
-    font-size: 15px;
-    cursor: pointer;
-}
-.login-popup-condition{
-    display: flex;
-    align-items: start;
-    gap: 8px;
-    margin-top: -15px;
-}
-.login-popup-condition input{
-    margin-top: 5px;
-}
-.login-popup p span{
-    color: tomato;
-    font-weight: 500;
-    cursor: pointer;
+/* Responsive nhỏ */
+@media (max-width: 420px) {
+  .login-popup-container {
+    width: 94vw;
+    padding: 20px;
+  }
 }

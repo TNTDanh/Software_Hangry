@@ -71,3 +71,51 @@ const registerUser = async (req,res) => {
 }
 
 export {loginUser,registerUser}
+
+// ---- Admin user management (simple) ----
+export const listUsers = async (req, res) => {
+  try {
+    const { q, active, role } = req.query;
+    const filter = {};
+    if (typeof active !== "undefined") filter.active = active === "true";
+    if (role) filter.role = role;
+    if (q) {
+      filter.$or = [
+        { name: { $regex: q, $options: "i" } },
+        { email: { $regex: q, $options: "i" } },
+      ];
+    }
+    const users = await userModel
+      .find(filter, { password: 0 })
+      .sort({ createdAt: -1 });
+    res.json({ success: true, data: users });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Error" });
+  }
+};
+
+export const updateUser = async (req, res) => {
+  try {
+    const { userId, role, active } = req.body;
+    const update = {};
+    if (role) update.role = role;
+    if (typeof active === "boolean") update.active = active;
+    await userModel.findByIdAndUpdate(userId, update);
+    res.json({ success: true, message: "Updated" });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Error" });
+  }
+};
+
+export const removeUser = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    await userModel.findByIdAndDelete(userId);
+    res.json({ success: true, message: "Removed" });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Error" });
+  }
+};

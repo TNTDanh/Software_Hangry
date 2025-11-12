@@ -1,36 +1,36 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useContext } from 'react'
 import './Verify.css'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { useContext } from 'react';
-import { StoreContext } from '../../context/StoreContext';
-import axios from 'axios';
+import axios from 'axios'
+import { StoreContext } from '../../context/StoreContext'
 
 const Verify = () => {
+  const [params] = useSearchParams()
+  const success = params.get('success')
+  const orderId = params.get('orderId')
+  const { url, setCartItems } = useContext(StoreContext)
+  const navigate = useNavigate()
 
-    const [searchParams,setSearchParams] = useSearchParams();
-    const success = searchParams.get("success")
-    const orderId = searchParams.get("orderId")
-    const {url} = useContext(StoreContext);
-    const navigate = useNavigate();
-
+  useEffect(() => {
     const verifyPayment = async () => {
-        const response = await axios.post(url+"/api/order/verify",{success,orderId});
-        if (response.data.success){
-            navigate("/myorders");
+      try {
+        const res = await axios.post(`${url}/api/order/verify`, { success, orderId })
+        if (res.data?.success) {
+          setCartItems?.({})
+          navigate('/myorders')
+        } else {
+          navigate('/')
         }
-        else {
-            navigate("/")
-        }
+      } catch {
+        navigate('/')
+      }
     }
-
-
-    useEffect(()=>{
-        verifyPayment();
-    },[])
+    verifyPayment()
+  }, [success, orderId, url, navigate, setCartItems])
 
   return (
-    <div className='verify'>
-        <div className="spinner"></div>
+    <div className="verify">
+      <div className="spinner" />
     </div>
   )
 }
