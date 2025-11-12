@@ -5,22 +5,37 @@ import { NavLink } from 'react-router-dom'
 
 const Sidebar = () => {
   return (
-    <div className='sidebar'>
-        <div className="sidebar-options">
-            <NavLink to='/add' className="sidebar-option">
-                <img className='addd' src={assets.add_icon} alt="" />
-                <p>Add Items</p>
-            </NavLink>
-            <NavLink to='/list' className="sidebar-option">
-                <img className='listt' src={assets.order_icon} alt="" />
-                <p>List Items</p>
-                </NavLink>
-            <NavLink to='/orders' className="sidebar-option">
-                <img className='orderr' src={assets.order_icon} alt="" />
-                <p>Orders</p>
-                </NavLink>
-        </div>
-    </div>
+    <aside className="sidebar admin-sidebar">
+      <div className="sidebar-header">
+        <span className="sidebar-title">MENU</span>
+      </div>
+
+      <nav className="sidebar-options">
+        <NavLink
+          to="/add"
+          className={({ isActive }) => `sidebar-option${isActive ? ' active' : ''}`}
+        >
+          <img className="addd" src={assets.add_icon} alt="" />
+          <p>ADD ITEMS</p>
+        </NavLink>
+
+        <NavLink
+          to="/list"
+          className={({ isActive }) => `sidebar-option${isActive ? ' active' : ''}`}
+        >
+          <img className="listt" src={assets.order_icon} alt="" />
+          <p>LIST ITEMS</p>
+        </NavLink>
+
+        <NavLink
+          to="/orders"
+          className={({ isActive }) => `sidebar-option${isActive ? ' active' : ''}`}
+        >
+          <img className="orderr" src={assets.order_icon} alt="" />
+          <p>ORDERS</p>
+        </NavLink>
+      </nav>
+    </aside>
   )
 }
 

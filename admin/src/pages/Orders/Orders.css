@@ -1,56 +1,116 @@
+/* Wrapper list */
+.order-list{
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--body-color);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  padding: 8px 0;
+}
+
+/* Mỗi item */
 .order-item{
-    display: grid;
-    grid-template-columns: 0.5fr 2fr 1fr 1fr 1fr;
-    align-items: start;
-    gap: 30px;
-    border: 1px solid tomato;
-    padding: 20px;
-    margin: 30px 0px;
-    font-size: 14px;
-    color: #505050;
+  display: grid;
+  grid-template-columns: 0.5fr 2fr 1fr 1fr 1fr; /* icon | info | items | amount | status */
+  align-items: start;
+  gap: 16px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 14px;
+  color: var(--light-text);
+  transition: background-color .15s ease;
 }
-.order-item-food, .order-item-name{
-    font-weight: 600;
+
+.order-item:hover{
+  background: rgba(255,255,255,0.04);
 }
+
+.order-item:last-child{
+  border-bottom: none;
+}
+
+.order-item img{
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+/* Info block */
+.order-item-food,
 .order-item-name{
-    margin-top: 30px;
-    margin-bottom: 5px;
+  font-weight: 700;
 }
+
+.order-item-name{
+  margin-top: 8px;
+  margin-bottom: 6px;
+}
+
 .order-item-address{
-    margin-bottom: 10px;
+  color: var(--light-text-secondary);
+  line-height: 1.35;
+  margin-bottom: 6px;
 }
+
+.order-item-phone{
+  color: var(--light-text);
+  font-weight: 600;
+}
+
+/* Căn giữa cột 3-5: Items, Amount, Status */
+.order-item > :nth-child(3),
+.order-item > :nth-child(4),
+.order-item > :nth-child(5){
+  justify-self: center;
+  text-align: center;
+}
+
+/* Select trạng thái */
 .order-item select{
-    background-color: #ffe8e4;
-    border: 1px solid tomato;
-    width: max(10vw,120px);
-    padding: 10px;
-    outline: none;
+  width: max(11vw, 140px);
+  padding: 10px;
+  border-radius: 8px;
+  outline: none;
+  border: 1px solid var(--border-color);
+  background: #ffe8e4;
+  color: #101010;
+  transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
 }
 
 :root .order-item select{
-    background-color: black;
-    color: white;
-    border: 1px solid tomato;
+  background-color: black;
+  color: white;
+  border: 1px solid tomato;
 }
 
 .lightcolors .order-item select{
-    background-color: #ffe8e4;
-    color: black;
-    border: 1px solid tomato;
+  background-color: #ffe8e4;
+  color: black;
+  border: 1px solid tomato;
 }
 
+.order-item select:focus{
+  border-color: tomato;
+  box-shadow: 0 0 0 3px rgba(255,99,71,0.18);
+}
 
-@media (max-width:1000px) {
-    .order-item{
-        font-size: 12px;
-        grid-template-columns: 0.5fr 2fr 1fr;
-        padding: 15px 8px;
-    }
-    .order-item select{
-        padding: 5px;
-        font-size: 12px;
-    }
-    .order-item img{
-        width: 40px;
-    }
+/* Responsive */
+@media (max-width: 1000px){
+  .order-item{
+    grid-template-columns: 0.5fr 2fr 1fr;
+    gap: 12px;
+    font-size: 12px;
+  }
+  /* Ẩn Amount cột 4 (gộp vào info nếu cần) – giữ Items và Status */
+  .order-item > :nth-child(4){ display: none; }
+
+  .order-item img{
+    width: 40px;
+    height: 40px;
+  }
+
+  .order-item select{
+    padding: 8px;
+    width: 120px;
+    font-size: 12px;
+  }
 }

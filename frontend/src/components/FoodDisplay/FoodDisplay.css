@@ -1,24 +1,32 @@
 .food-display{
-    margin-top: 30px;
+  padding-top: 20px;
 }
 
-.food-display h2{
-    font-size: max(2vw,24px);
-    font-weight: 600;
+.food-display-title{
+  margin: 0 0 10px 0;
+  color: var(--light-text);
+  font-weight: 900;
+  font-size: max(2.2vw, 22px);
 }
+
+/* Grid danh sách món – đồng bộ khoảng cách */
 .food-display-list{
-    display: grid;
-    grid-template-columns: repeat(auto-fill,minmax(240px, 1fr));
-    margin-top: 30px;
-    gap: 30px;
-    row-gap: 50px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px 24px;         /* row-gap / column-gap */
+  margin-top: 14px;
 }
 
-:root .h2we {
-    color: white; 
+/* Responsive */
+@media (max-width: 900px){
+  .food-display-list{
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px 18px;
+  }
 }
-
-/* Remove filter from h2 elements in lightcolors theme */
-.lightcolors .h2we {
-    color: black
+@media (max-width: 600px){
+  .food-display-list{
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 14px 16px;
+  }
 }

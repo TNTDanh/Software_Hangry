@@ -1,33 +1,110 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 
-*{
-  padding: 0;
-  margin: 0;
-  box-sizing: 0;
-  font-family: Outfit;
-  scroll-behavior: smooth;
+/* ========== Reset + Base ========== */
+*,
+*::before,
+*::after{
+  box-sizing: border-box;       /* fix: không phải 0 */
 }
-
+html{ scroll-behavior: smooth; }
 body{
-  background-color: var(--body-color);
+  margin: 0;
+  font-family: Outfit, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Helvetica Neue", "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  background: var(--body-color);
+  color: var(--light-text);
   min-height: 100vh;
 }
+body.modal-open{ overflow: hidden; }
+a{ text-decoration: none; color: inherit; }
+img{ display: block; max-width: 100%; height: auto; }
 
-a{
-  text-decoration: none;
-  color: inherit;
-}
-
+/* App container */
 .app{
   width: 80%;
-  margin: auto;
+  margin: 0 auto;
+}
+@media (max-width: 900px){
+  .app{ width: 92%; }
 }
 
-@keyframes fadeIn {
-  0%{
-    opacity: 0;
-  }
-  100%{
-    opacity: 1;
-  }
+/* ========== Theme Tokens ========== */
+/* Dark (mặc định) */
+:root{
+  --body-color: #121212;
+  --light-text: #ffffff;
+  --light-text-secondary: #d1d5db;
+  --border-color: rgba(255,255,255,.15);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+
+  --brand-1: #ff7256;
+  --brand-2: #ff6347;
+
+  --shadow-soft: 0 6px 16px rgba(0,0,0,.10);
+  --shadow-card: 0 8px 22px rgba(0,0,0,.12);
+  --shadow-brand: 0 8px 20px rgba(255,99,71,.35);
+}
+
+/* Light */
+.lightcolors{
+  --body-color: #ffffff;
+  --light-text: #111111;
+  --light-text-secondary: #555555;
+  --border-color: #e5e7eb;
+}
+
+/* ========== Typography ========== */
+h1,h2,h3,h4,h5,h6{
+  color: var(--light-text);
+  margin: 0 0 10px 0;
+  font-weight: 900;
+}
+p, small{
+  color: var(--light-text-secondary);
+  margin: 0;
+}
+
+/* ========== Utilities ========== */
+.section{ padding: 16px; }
+.divider{ height: 1px; background: var(--border-color); border: 0; }
+
+/* Thẻ card dùng chung */
+.card{
+  background: var(--body-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+/* Buttons */
+.btn{
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  font-weight: 900;
+  cursor: pointer;
+  transition: filter .2s ease, box-shadow .2s ease, transform .05s ease;
+}
+.btn:active{ transform: translateY(1px); }
+
+.btn-primary{
+  border: none;
+  color: #fff;
+  background: linear-gradient(180deg, var(--brand-1), var(--brand-2));
+  box-shadow: var(--shadow-brand);
+}
+.btn-primary:hover{ filter: brightness(.98); box-shadow: 0 10px 26px rgba(255,99,71,.42); }
+
+.btn-ghost{
+  background: #fff; color: #111;
+}
+.lightcolors .btn-ghost:hover{ background: #f7f7f7; }
+
+/* ========== Animations ========== */
+@keyframes fadeIn{
+  0%{ opacity: 0; }
+  100%{ opacity: 1; }
 }

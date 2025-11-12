@@ -1,71 +1,75 @@
+/* Footer tối (không phụ thuộc theme) */
+.footer--dark{
+  background: linear-gradient(180deg, #1d1d1f 0%, #262628 100%);
+  color: #e7e7e7;
+}
+
+/* Kích thước rộng rãi hơn một chút */
 .footer{
-    color: #d9d9d9;
-    background-color: #323232;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    padding: 20px 8vw;
-    padding-top: 80px;
-    margin-top: 100px;
+  padding: 28px 8vw 26px;
+  margin-top: 48px;
+  border-top: 1px solid rgba(255,255,255,.06);
 }
+
+/* Grid 3 cột */
 .footer-content{
-    width: 100%;
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    gap: 80px;
-}
-.footer-content-left , .footer-content-right , .footer-content-center {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    gap: 20px;
-}
-.footer-content-left li, .footer-content-right li, .footer-content-center li {
-    list-style: none;
-    margin-bottom: 10px;
-    cursor: pointer;
-}
-.footer-content-right h2, .footer-content-center h2 {
-    color: white;
-}
-.footer-social-icons img{
-    cursor: pointer;
-    width: 40px;
-    margin-right: 15px;
-}
-.footer hr{
-    width: 100%;
-    height: 2px;
-    margin: 20px 0;
-    background-color: grey;
-    border: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  align-items: start;
 }
 
-:root .footer {
-    background-color: #252323;
+/* Cột */
+.footer-col{ display: flex; flex-direction: column; gap: 8px; }
+
+.footer-logo{
+  width: 132px; height: auto; display: block;
+  filter: none; /* luôn giữ màu logo gốc */
 }
 
-.lightcolors .footer {
-    background-color: #323232;
+.footer-note{ margin: 0; color: #cfd2d7; font-size: 14px; }
+.footer-note-strong{ margin: 0; color: #ffffff; font-weight: 800; font-size: 14px; }
+
+/* Social */
+.footer-social{ display: inline-flex; align-items: center; gap: 12px; margin-top: 6px; }
+.footer-social img{
+  width: 28px; height: 28px; display:block; cursor:pointer;
+  filter: none; /* không invert */
+  transition: transform .08s ease, filter .2s ease;
+}
+.footer-social img:hover{ filter: brightness(1.08); transform: translateY(-1px); }
+
+/* Titles + list */
+.footer-title{
+  margin: 6px 0 8px 0;
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 14px;
+  letter-spacing: .3px;
+}
+.footer-list{
+  list-style: none; margin: 0; padding: 0; display: grid; gap: 6px;
+}
+.footer-list li, .footer-list a{
+  color: #d6d8dd; text-decoration: none; font-size: 14px;
+}
+.footer-list a:hover{ text-decoration: underline; }
+
+/* Divider + copy */
+.footer-divider{
+  border: 0; height: 1px;
+  background: rgba(255,255,255,.08);
+  margin: 16px 0 10px;
+}
+.footer-copy{
+  margin: 0; text-align: center; color: #bfc3c9; font-size: 12px;
 }
 
-:root .tomatologofooter {
-    filter: var(--logos-filter); 
+/* Responsive */
+@media (max-width: 900px){
+  .footer-content{ grid-template-columns: 1fr 1fr; }
 }
-
-.lightcolors .tomatologofooter {
-    filter: none; 
-}
-
-
-@media (max-width:750px) {
-    .footer-content{
-        display: flex;
-        flex-direction: column;
-        gap: 35px;
-    }
-    .footer-copyright{
-        text-align: center;
-    }
+@media (max-width: 600px){
+  .footer-content{ grid-template-columns: 1fr; gap: 12px; }
+  .footer{ padding: 22px 16px 20px; }
 }

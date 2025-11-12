@@ -8,7 +8,7 @@ const AppDownload = () => {
       <p className="pforbetter">For Better Experience Download{" "}
         <h1 style={{ color: "#ff7a00" }}>Hangry App</h1>
       </p>
-      <div className="app-download-platforms">
+      <div className="badges">
         {/* Google Play */}
         <a
           href="https://play.google.com/store/apps/details?id=com.yourappname"

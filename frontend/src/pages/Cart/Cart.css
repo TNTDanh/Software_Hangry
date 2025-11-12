@@ -1,68 +1,159 @@
 .cart{
     margin-top: 100px;
 }
+
+/* Header cột + dùng luôn cho row (vì row dùng chung class) */
 .cart-items-title{
     display: grid;
     grid-template-columns: 1fr 1.5fr 1fr 1fr 1fr 0.5fr;
     align-items: center;
     color: grey;
     font-size: max(1vw, 12px);
+    column-gap: 12px;
 }
+
 .cart-items-item{
     margin: 10px 0px;
     color: black;
+    padding: 8px 6px;
+    border-radius: 8px;
+    transition: background-color .2s ease, box-shadow .2s ease;
 }
+
+.cart-items-item:hover{
+    background: #fff9f6;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+}
+
 .cart-items-item img{
     width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
 }
+
 .cart hr{
     height: 1px;
     background-color: #e2e2e2;
     border: none;
 }
+
 .cart-items-item .cross{
     cursor: pointer;
+    color: #ff4d4d;
+    font-weight: 700;
+    transition: color .2s ease, transform .05s ease;
 }
+
+.cart-items-item .cross:hover{
+    color: #e60000;
+    transform: scale(1.06);
+}
+
+/* Khu vực tổng kết + nút */
 .cart-bottom{
     margin-top: 80px;
     display: flex;
     justify-content: space-between;
     gap: max(12vw, 20px);
 }
+
 .cart-total{
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
+
 .cart-total-details{
     display: flex;
     justify-content: space-between;
-    color: #555;
+    color: #f10707;
 }
+
 .cart-total hr{
     margin: 10px 0px;
 }
+
+/* Nút chính và phụ (áp dụng chung) */
 .cart-total button{
     border: none;
     color: white;
     background-color: tomato;
     width: max(15vw,200px);
     padding: 12px 0px;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
+    transition: box-shadow .2s ease, filter .2s ease, transform .05s ease;
+    box-shadow: 0 2px 8px rgba(255, 99, 71, 0.25);
 }
+
+.cart-total button:hover{
+    filter: brightness(0.95);
+    box-shadow: 0 4px 14px rgba(255, 99, 71, 0.35);
+}
+
+.cart-total button:active{
+    transform: translateY(1px);
+}
+
+/* Nút thứ 2 (ORDER MORE) dạng secondary */
+.cart-total button + button{
+    background-color: transparent;
+    color: tomato;
+    border: 1px solid tomato;
+    box-shadow: none;
+}
+
+.cart-total button + button:hover{
+    background-color: rgba(255, 99, 71, 0.08);
+    box-shadow: 0 4px 12px rgba(255, 99, 71, 0.25);
+}
+
+/* Container 2 nút: ép cùng một hàng, đảo vị trí hiển thị */
+.cart-actions{
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  flex-wrap: nowrap;          /* luôn cùng một hàng */
+  align-items: stretch;
+}
+
+/* Ghi đè kích thước cho nút trong .cart-actions (vượt qua width chung ở trên) */
+.cart-actions button{
+  width: auto !important;     /* bỏ width cố định */
+  padding: 12px 16px;
+  min-width: 140px;
+  flex: 0 0 auto;
+  font-weight: 800;
+}
+
+/* DOM: nút 1 = Checkout, nút 2 = Order More
+   Hiển thị: Order More (nhỏ) bên trái, Checkout (to) bên phải */
+.cart-actions button:first-child{     /* Checkout trong DOM */
+  order: 2;                           /* đẩy sang phải */
+  flex: 1 1 280px;                    /* to hơn, chiếm phần còn lại */
+  min-width: 220px;
+}
+
+.cart-actions button:last-child{      /* Order More trong DOM */
+  order: 1;                           /* kéo sang trái */
+  flex: 0 0 160px;       
+  font-style: italic;             /* nhỏ hơn, cố định */
+}
+
+/* Promo */
 .cart-promocode {
   display: flex;
-  justify-content: center;   /* Căn giữa ngang */
-  align-items: center;       /* Căn giữa dọc nếu cần */
-  text-align: center;        /* Căn chữ giữa */
-  background-color: #fff4e6; /* Nền nhẹ màu cam nhạt */
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background-color: #fff4e6;
   border-radius: 16px;
   padding: 25px;
   margin: 30px auto;
   width: 90%;
-  max-width: 600px;          /* Giới hạn khung cho cân đối */
+  max-width: 600px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
 
@@ -87,37 +178,20 @@
   line-height: 1.5;
 }
 
+/* Theme */
+:root .cart-items-title { color: white; }
+.lightcolors .cart-items-title { color: grey; }
 
-
-:root .cart-items-title {
-    color: white;
-}
-
-.lightcolors .cart-items-title {
-    color: grey;
-}
-
-
-
-:root .promocodep{
-    color: rgb(26, 25, 25);
-}
-.lightcolors .promocodep{
-    color: #555555
-}
+:root .promocodep{ color: rgb(26, 25, 25); }
+.lightcolors .promocodep{ color: #555555 }
 
 :root .cart-total-details,
-:root .cart-total {
-    color: white;
-}
-
+:root .cart-total { color: white; }
 
 .lightcolors .cart-total-details,
-.lightcolors .cart-total {
-    color: grey;
-}
+.lightcolors .cart-total { color: grey; }
 
-
+/* Responsive */
 @media (max-width:750px){
     .cart-bottom{
         flex-direction: column-reverse;
@@ -126,3 +200,32 @@
         justify-content: start;
     }
 }
+
+/* Nút tăng/giảm số lượng */
+.qty-btn{
+  border: 1px solid #ff7a00;
+  background: #fff;
+  color: #ff7a00;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color .2s ease, box-shadow .2s ease, transform .05s ease;
+}
+
+.qty-btn:hover{
+  background: #fff3e6;
+  box-shadow: 0 2px 6px rgba(255, 122, 0, 0.28);
+}
+
+.qty-btn:active{
+  transform: translateY(1px) scale(0.98);
+}
+
+.qty-value{
+  display: inline-block;
+  min-width: 28px;
+  text-align: center;
+  font-weight: 500;
+}
+
