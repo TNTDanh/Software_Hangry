@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [dev, main]
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build and Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+
+      # Backend: install deps only (no build script)
+      - name: Backend install
+        working-directory: backend
+        run: |
+          npm ci || npm install
+
+      # Frontend web: install + build
+      - name: Frontend install
+        working-directory: frontend
+        run: |
+          npm ci || npm install
+      - name: Frontend build
+        working-directory: frontend
+        run: |
+          npm run build
+
+      # Admin web: install + build
+      - name: Admin install
+        working-directory: admin
+        run: |
+          npm ci || npm install
+      - name: Admin build
+        working-directory: admin
+        run: |
+          npm run build
+
+      # Users Admin web: install + build
+      - name: Users Admin install
+        working-directory: users-admin
+        run: |
+          npm ci || npm install
+      - name: Users Admin build
+        working-directory: users-admin
+        run: |
+          npm run build
+
+      # Mobile (Expo): install + lint only (skip heavy builds)
+      - name: Mobile install
+        working-directory: mobile
+        run: |
+          npm ci || npm install
+      - name: Mobile lint (if configured)
+        working-directory: mobile
+        run: |
+          npm run lint --if-present
