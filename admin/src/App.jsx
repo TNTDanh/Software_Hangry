@@ -14,17 +14,18 @@ const App = () => {
   const url = "https://hangry-backend.onrender.com"
 
   return (
-    <div>
+    <div className="admin-app">
       <ToastContainer/>
       <Navbar/>
-      <hr/>
       <div className="app-content">
         <Sidebar/>
-        <Routes>
-          <Route path="/add" element={<Add url={url}/>}/>
-          <Route path="/list" element={<List url={url}/>}/>
-          <Route path="/orders" element={<Orders url={url}/>}/>
-        </Routes>
+        <div className="app-main">
+          <Routes>
+            <Route path="/add" element={<Add url={url}/>}/>
+            <Route path="/list" element={<List url={url}/>}/>
+            <Route path="/orders" element={<Orders url={url}/>}/>
+          </Routes>
+        </div>
       </div>
     </div>
   )

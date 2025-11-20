@@ -90,7 +90,20 @@ const Navbar = ({ setShowLogin }) => {
             <Link to="/#app-download" className="nav-link" onClick={closeMobile}>
               MOBILE - APP
             </Link>
-            <Link to="/#footer" className="nav-link" onClick={closeMobile}>
+            <Link
+              to="/#footer"
+              className="nav-link"
+              onClick={(e) => {
+                closeMobile()
+                if (location.pathname === "/myorders" || location.pathname === "/cart") {
+                  e.preventDefault()
+                  window.scrollTo({
+                    top: document.documentElement.scrollHeight,
+                    behavior: "smooth",
+                  })
+                }
+              }}
+            >
               CONTACT - US
             </Link>
             <Link

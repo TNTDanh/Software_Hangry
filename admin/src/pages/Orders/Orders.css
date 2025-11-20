@@ -1,3 +1,6 @@
+﻿.h3{
+  margin-bottom: 16px;
+}
 /* Wrapper list */
 .order-list{
   border: 1px solid var(--border-color);
@@ -7,7 +10,7 @@
   padding: 8px 0;
 }
 
-/* Mỗi item */
+/* Má»—i item */
 .order-item{
   display: grid;
   grid-template-columns: 0.5fr 2fr 1fr 1fr 1fr; /* icon | info | items | amount | status */
@@ -43,6 +46,7 @@
 .order-item-name{
   margin-top: 8px;
   margin-bottom: 6px;
+  font-weight: 400;
 }
 
 .order-item-address{
@@ -50,13 +54,23 @@
   line-height: 1.35;
   margin-bottom: 6px;
 }
+.order-item-address p{
+  font-weight: 400;
+}
+.order-item-address .label,
+.order-item-name .label,
+.order-item-phone .label{
+  font-weight: 700;
+  color: var(--light-text);
+  margin-right: 6px;
+}
 
 .order-item-phone{
   color: var(--light-text);
-  font-weight: 600;
+  font-weight: 400;
 }
 
-/* Căn giữa cột 3-5: Items, Amount, Status */
+/* CÄƒn giá»¯a cá»™t 3-5: Items, Amount, Status */
 .order-item > :nth-child(3),
 .order-item > :nth-child(4),
 .order-item > :nth-child(5){
@@ -64,33 +78,108 @@
   text-align: center;
 }
 
-/* Select trạng thái */
-.order-item select{
-  width: max(11vw, 140px);
-  padding: 10px;
-  border-radius: 8px;
-  outline: none;
+/* Select Status*/
+.order-status-cell{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+}
+.status-display{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.status-toggle{
   border: 1px solid var(--border-color);
-  background: #ffe8e4;
-  color: #101010;
-  transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+  background: #fff;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  transition: background-color .15s ease;
+  flex-shrink: 0;
+}
+.status-toggle:hover{
+  background: rgba(0,0,0,0.05);
+}
+.status-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 16px;
+    padding: 6px 24px;
+    border-radius: 999px;
+    text-transform: capitalize;
+    border: 1px solid transparent;
+    cursor: pointer;
+    width: 180px;
+    text-align: center;
+    white-space: nowrap;
+}
+.status-badge .dot{
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+.status-badge .caret{
+  font-size: 13px;
+  flex-shrink: 0;
 }
 
-:root .order-item select{
-  background-color: black;
-  color: white;
-  border: 1px solid tomato;
-}
 
-.lightcolors .order-item select{
-  background-color: #ffe8e4;
-  color: black;
-  border: 1px solid tomato;
+.status-options{
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: rgba(0,0,0,0.04);
 }
-
-.order-item select:focus{
-  border-color: tomato;
-  box-shadow: 0 0 0 3px rgba(255,99,71,0.18);
+ .status-options.open{
+  display: flex;
+}
+.status-pill{
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  background: transparent;
+  color: inherit;
+  transition: transform .1s ease, box-shadow .15s ease;
+  width: 100%;
+  text-align: center;
+}
+.status-pill:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+}
+.status-pill.active{
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+}
+.status-processing{
+  color: #d97706;
+  background: rgba(217, 119, 6, 0.12);
+  border-color: rgba(217, 119, 6, 0.3);
+}
+.status-out{
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.12);
+  border-color: rgba(220, 38, 38, 0.3);
+}
+.status-delivered{
+  color: #15803d;
+  background: rgba(21, 128, 61, 0.12);
+  border-color: rgba(21, 128, 61, 0.3);
 }
 
 /* Responsive */
@@ -100,7 +189,7 @@
     gap: 12px;
     font-size: 12px;
   }
-  /* Ẩn Amount cột 4 (gộp vào info nếu cần) – giữ Items và Status */
+  /* áº¨n Amount cá»™t 4 (gá»™p vÃ o info náº¿u cáº§n) â€“ giá»¯ Items vÃ  Status */
   .order-item > :nth-child(4){ display: none; }
 
   .order-item img{
@@ -114,3 +203,10 @@
     font-size: 12px;
   }
 }
+
+
+
+
+
+
+

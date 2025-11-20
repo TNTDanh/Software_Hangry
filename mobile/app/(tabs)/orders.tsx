@@ -222,7 +222,7 @@ export default function OrdersScreen() {
         }}
         onSuccess={() => {
           clearCart();
-          router.push("/(tabs)/profile");
+          router.push("/(tabs)/myorders");
         }}
       />
     </KeyboardAvoidingView>

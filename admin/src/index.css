@@ -1,5 +1,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 
+:root {
+  --border-color: #27272a;
+  --nav-color-one: #0d0d179a;
+  --nav-color-two: #0d0618;
+  --body-color: #121212;
+  --dark-text: #101010;
+  --light-text: #ffffff;
+  --nav-height: 72px;
+  --sidebar-width: 240px;
+  --light-text-secondary: #9ca3af;
+}
+
+body.lightcolors {
+  --body-color: #FFFFFF;
+  --nav-color-two: #f6f6f2;
+  --nav-color-one: #f1f1f17e;
+  --border-color: #ddd;
+  --light-text: #101010;
+  --light-text-secondary: #4b5563;
+}
+
 *{
   padding: 0;
   margin: 0;
@@ -23,8 +44,25 @@ hr{
   background-color: #a9a9a9;
 }
 
+.admin-app{
+  min-height: 100vh;
+  background-color: var(--body-color);
+}
+
 .app-content{
   display: flex;
+  align-items: flex-start;
+  margin-top: var(--nav-height);
+  padding-left: var(--sidebar-width);
+}
+
+.app-main{
+  flex: 1;
+  padding: 32px;
+  min-height: calc(100vh - var(--nav-height));
+  background-color: var(--body-color);
+  color: var(--light-text);
+  overflow-x: hidden;
 }
 
 .flex-col{

@@ -8,7 +8,7 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import client from "../../src/api/client";
 import { useAuthStore } from "../../lib/store/auth";
 
@@ -56,6 +56,13 @@ export default function MyOrdersScreen() {
     if (!token) return;
     fetchOrders();
   }, [token, fetchOrders]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!token) return;
+      fetchOrders();
+    }, [token, fetchOrders])
+  );
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -176,4 +183,3 @@ const s = StyleSheet.create({
   pillText: { fontWeight: "800" },
   statusDot: { width: 10, height: 10, borderRadius: 5 },
 });
-

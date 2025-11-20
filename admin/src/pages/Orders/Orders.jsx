@@ -6,6 +6,7 @@ import { assets } from '../../assets/assets'
 
 const Orders = ({ url }) => {
   const [orders, setOrders] = useState([])
+  const [openStatusId, setOpenStatusId] = useState(null)
 
   const fetchAllOrders = async () => {
     try {
@@ -53,7 +54,7 @@ const Orders = ({ url }) => {
 
   return (
     <div className="order add">
-      <h3>Order Page</h3>
+      <h3 className="h3">ORDER PAGE</h3>
       <div className="order-list">
         {orders.map((order, index) => {
           const items = Array.isArray(order?.items) ? order.items : []
@@ -63,10 +64,17 @@ const Orders = ({ url }) => {
           const cityLine = [addr.city, addr.state, addr.country, addr.zipcode].filter(Boolean).join(', ')
           const phone = addr.phone || 'N/A'
           const amount = Number(order?.amount ?? 0)
-          const status = order?.status || 'Food Processing'
+          const statusText = order?.status || 'Food Processing'
+          const status = statusText.toLowerCase()
+          let statusClass = 'status-processing'
+          if (status.includes('out for delivery')) statusClass = 'status-out'
+          else if (status.includes('delivered')) statusClass = 'status-delivered'
+
+          const orderKey = order?._id || index
+          const isOpen = openStatusId === orderKey
 
           return (
-            <div key={order?._id || index} className="order-item">
+            <div key={orderKey} className="order-item">
               <img src={assets.parcel_icon} alt="" />
               <div>
                 <p className="order-item-food">
@@ -76,27 +84,64 @@ const Orders = ({ url }) => {
                   })}
                 </p>
 
-                <p className="order-item-name">{fullName}</p>
+                {fullName ? (
+                  <p className="order-item-name">
+                    <span className="label">Name:</span> {fullName}
+                  </p>
+                ) : null}
 
-                <div className="order-item-address">
-                  <p>{street}</p>
-                  <p>{cityLine}</p>
-                </div>
+                {(street || cityLine) ? (
+                  <div className="order-item-address">
+                    <p className="label">Address:</p>
+                    {street ? <p>{street}</p> : null}
+                    {cityLine ? <p>{cityLine}</p> : null}
+                  </div>
+                ) : null}
 
-                <p className="order-item-phone">{phone}</p>
+                {phone ? (
+                  <p className="order-item-phone">
+                    <span className="label">Phone:</span> {phone}
+                  </p>
+                ) : null}
               </div>
 
               <p>Items : {items.length}</p>
               <p>${amount}</p>
 
-              <select
-                onChange={(event) => statusHandler(event, order?._id)}
-                value={status}
-              >
-                <option value="Food Processing">Food Processing</option>
-                <option value="Out for delivery">Out for delivery</option>
-                <option value="Delivered">Delivered</option>
-              </select>
+              <div className="order-status-cell">
+                <button
+                  type="button"
+                  className={`status-badge ${statusClass}`}
+                  onClick={() =>
+                    setOpenStatusId((prev) => (prev === orderKey ? null : orderKey))
+                  }
+                  aria-expanded={isOpen}
+                >
+                  <span className="dot" aria-hidden />
+                  {statusText}
+                  <span className="caret" aria-hidden>
+                    {isOpen ? '▴' : '▾'}
+                  </span>
+                </button>
+                <div className={`status-options ${isOpen ? 'open' : ''}`}>
+                  {['Food Processing', 'Out For Delivery', 'Delivered'].map((opt) => {
+                    let optClass = 'status-processing'
+                    const lower = opt.toLowerCase()
+                    if (lower.includes('out for delivery')) optClass = 'status-out'
+                    else if (lower.includes('delivered')) optClass = 'status-delivered'
+                    return (
+                      <button
+                        key={opt}
+                        type="button"
+                        className={`status-pill ${optClass} ${opt === statusText ? 'active' : ''}`}
+                        onClick={() => statusHandler({ target: { value: opt } }, order?._id)}
+                      >
+                        {opt}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
             </div>
           )
         })}

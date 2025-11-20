@@ -60,7 +60,7 @@ const List = ({ url }) => {
   return (
     <div className="list add flex-col">
       <div className="list-head">
-        <p className="title">All Foods</p>
+        <p className="title">ALL FOODS</p>
         {loading && <span className="muted">Loading…</span>}
       </div>
 

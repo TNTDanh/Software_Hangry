@@ -27,6 +27,8 @@ export default function LoginScreen() {
     "/(tabs)",
     "/(tabs)/index",
     "/(tabs)/cart",
+    "/(tabs)/orders",
+    "/(tabs)/myorders",
     "/(tabs)/profile",
     "/auth/register",
   ]);
@@ -48,11 +50,11 @@ export default function LoginScreen() {
         null;
 
       if (!token) {
-        throw new Error(res.data?.message || "Tài khoản không tồn tại hoặc sai mật khẩu.");
+        throw new Error(res.data?.message || "Account does not exist or Password is incorrect.");
       }
 
       setToken(token);
-      Alert.alert("Thành công", "Đăng nhập thành công!");
+      Alert.alert("Success", "Login Successful !!!");
 
       const toRaw = typeof returnTo === "string" ? safeDecode(returnTo) : undefined;
       if (toRaw && allowed.has(toRaw)) {

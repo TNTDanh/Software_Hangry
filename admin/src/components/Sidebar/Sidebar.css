@@ -1,12 +1,15 @@
 /* Container */
 .sidebar.admin-sidebar{
-  width: 18%;
-  min-height: 100vh;
+  width: var(--sidebar-width);
+  min-height: calc(100vh - var(--nav-height));
   border-right: 1.5px solid var(--border-color);
   background: linear-gradient(180deg, var(--nav-color-one), transparent 30%);
   font-size: max(1vw, 11px);
-  position: sticky;
-  top: 0;
+  position: fixed;
+  top: var(--nav-height);
+  left: 0;
+  overflow-y: auto;
+  padding-bottom: 24px;
 }
 
 /* Header */

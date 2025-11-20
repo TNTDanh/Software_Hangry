@@ -126,6 +126,10 @@ const Cart = () => {
           <div className="cart-actions">
             <button
               onClick={() => {
+                if (subtotal === 0) {
+                  alert("Your cart is empty. Please add some items before checking out.");
+                  return;
+                }
                 if (!token) {
                   setShowLogin(true);
                   return;
