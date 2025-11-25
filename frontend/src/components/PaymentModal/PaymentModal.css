@@ -1,0 +1,334 @@
+.payment-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.46);
+  backdrop-filter: blur(2px);
+  display: grid;
+}
+
+.payment-box {
+  place-self: center;
+  width: min(960px, 92vw);
+  background: var(--body-color, #ffffff);
+  color: var(--light-text, #111111);
+  border: 1px solid var(--border-color, #e6e6e6);
+  border-radius: 14px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  padding: 14px;
+}
+
+.payment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 6px 12px;
+  border-bottom: 1px solid var(--border-color, #eeeeee);
+}
+
+.payment-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 0.2px;
+}
+
+.payment-header .close {
+  border: 1px solid var(--border-color, #e6e6e6);
+  background: transparent;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--light-text, #111);
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease,
+    transform 0.05s ease;
+}
+.payment-header .close:hover {
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+}
+.payment-header .close:active {
+  transform: translateY(1px);
+}
+
+.payment-content {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 14px;
+  padding: 12px 4px 4px;
+}
+
+.card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent);
+  border: 1px solid var(--border-color, #e6e6e6);
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.section-title {
+  font-weight: 900;
+  margin: 0 0 12px;
+  letter-spacing: 0.2px;
+}
+
+/* Items list */
+.items {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-variant-numeric: tabular-nums; /* thẳng hàng chữ số */
+}
+.items li {
+  display: grid;
+  grid-template-columns: 1fr auto auto; /* name | qty | price */
+  gap: 10px;
+  align-items: center;
+}
+.items li span:nth-child(2), /* qty */
+.items li span:nth-child(3) {
+  /* price */
+  color: var(--light-text, #111);
+}
+.items .muted {
+  color: #909090;
+}
+
+/* Totals */
+.totals {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-variant-numeric: tabular-nums;
+}
+.totals .row {
+  display: flex;
+  justify-content: space-between;
+  color: var(--light-text, #111);
+}
+.totals .total {
+  color: #e90303ff;
+  margin-top: 6px;
+  font-weight: 900;
+}
+
+/* Payment methods */
+.pm-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color, #e6e6e6);
+  border-radius: 10px;
+  margin: 10px 0;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+.pm-option input {
+  accent-color: tomato; /* radio màu thương hiệu */
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+.pm-option:hover {
+  background: rgba(255, 99, 71, 0.06);
+  box-shadow: 0 2px 10px rgba(255, 99, 71, 0.18);
+  border-color: rgba(255, 99, 71, 0.35);
+}
+/* label khi checked (sử dụng :has, hoạt động tốt trên Chrome/Edge/Safari mới) */
+.pm-option:has(input:checked) {
+  background: rgba(255, 99, 71, 0.08);
+  border-color: tomato;
+  box-shadow: 0 3px 12px rgba(255, 99, 71, 0.22);
+}
+
+/* Buttons */
+.pay-btn {
+  width: 100%;
+  margin-top: 12px;
+  background: linear-gradient(180deg, #ff7256, #ff6347);
+  color: #fff;
+  padding: 12px;
+  font-weight: 900;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: filter 0.2s ease, box-shadow 0.2s ease, transform 0.05s ease;
+  box-shadow: 0 6px 16px rgba(255, 99, 71, 0.35);
+}
+.pay-btn:hover {
+  filter: brightness(0.98);
+  box-shadow: 0 8px 22px rgba(255, 99, 71, 0.42);
+}
+.pay-btn:active {
+  transform: translateY(1px);
+}
+.pay-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.back-btn {
+  width: 100%;
+  margin-top: 10px;
+  background: transparent;
+  color: tomato;
+  border: 1px solid tomato;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease,
+    transform 0.05s ease;
+}
+.back-btn:hover {
+  background: rgba(255, 99, 71, 0.06);
+  box-shadow: 0 2px 10px rgba(255, 99, 71, 0.18);
+}
+.back-btn:active {
+  transform: translateY(1px);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .payment-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Card modal */
+.card-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.card-modal {
+  width: min(460px, 92vw);
+  background: #fff;
+  border-radius: 24px;
+  border: 1px solid #e3e3e3;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+.card-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+  border-bottom: 1px solid #f5f5f5;
+}
+.card-modal-header h4 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 900;
+}
+.card-modal-header button {
+  border: none;
+  background: transparent;
+  font-size: 24px;
+  cursor: pointer;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+.card-modal-header button:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+.card-modal-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.card-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  color: #333;
+}
+.card-field input {
+  border: 1px solid #d4d4d4;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-size: 15px;
+  background: #fdfdfd;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.card-field input:focus {
+  border-color: #111;
+  box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.08);
+  outline: none;
+}
+.card-field span {
+  font-weight: 700;
+  color: #5f6368;
+}
+.card-field input::placeholder {
+  color: #b0b0b0;
+}
+.cvv-input {
+  letter-spacing: 0.3em;
+  width: 170px;
+}
+.card-field-row {
+  display: flex;
+  gap: 12px;
+}
+.card-field-row .card-field:first-child {
+  flex: 1;
+}
+.card-field-row.compact {
+  gap: 10px;
+}
+.card-field-row.compact .card-field:first-child {
+  flex: 0 0 calc(58% - 5px);
+}
+.card-field-row.compact .cvv-field {
+  flex: 0 0 calc(42% - 5px);
+}
+.card-error {
+  color: #dc2626;
+  font-style: italic;
+  margin-top: 4px;
+}
+.card-pay-btn {
+  background: #111;
+  color: #fff;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+.card-pay-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.card-cancel-btn {
+  background: transparent;
+  border: 1px solid #dcdcdc;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}

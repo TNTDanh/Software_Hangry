@@ -1,36 +1,42 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useContext, useState } from 'react'
 import './Verify.css'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { useContext } from 'react';
-import { StoreContext } from '../../context/StoreContext';
-import axios from 'axios';
+import axios from 'axios'
+import { StoreContext } from '../../context/StoreContext'
 
 const Verify = () => {
+  const [params] = useSearchParams()
+  const success = params.get('success')
+  const orderId = params.get('orderId')
+  const { url, setCartItems, lang } = useContext(StoreContext)
+  const t = (vi, en) => (lang === 'vi' ? vi : en)
+  const navigate = useNavigate()
+  const [message, setMessage] = useState(t('Đang xác thực thanh toán...', 'Verifying payment...'))
 
-    const [searchParams,setSearchParams] = useSearchParams();
-    const success = searchParams.get("success")
-    const orderId = searchParams.get("orderId")
-    const {url} = useContext(StoreContext);
-    const navigate = useNavigate();
-
+  useEffect(() => {
     const verifyPayment = async () => {
-        const response = await axios.post(url+"/api/order/verify",{success,orderId});
-        if (response.data.success){
-            navigate("/myorders");
+      try {
+        const res = await axios.post(`${url}/api/order/verify`, { success, orderId })
+        if (res.data?.success) {
+          setCartItems?.({})
+          setMessage(t('Thanh toán thành công, chuyển đến đơn hàng...', 'Payment successful, redirecting...'))
+          navigate('/myorders')
+        } else {
+          setMessage(t('Thanh toán không thành công, quay về trang chủ.', 'Payment failed, going home.'))
+          navigate('/')
         }
-        else {
-            navigate("/")
-        }
+      } catch {
+        setMessage(t('Lỗi khi xác thực, quay về trang chủ.', 'Error verifying, going home.'))
+        navigate('/')
+      }
     }
-
-
-    useEffect(()=>{
-        verifyPayment();
-    },[])
+    verifyPayment()
+  }, [success, orderId, url, navigate, setCartItems, lang])
 
   return (
-    <div className='verify'>
-        <div className="spinner"></div>
+    <div className="verify">
+      <div className="spinner" />
+      <p className="verify-text">{message}</p>
     </div>
   )
 }

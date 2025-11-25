@@ -1,40 +1,180 @@
 .add{
-    width: 70%;
-    margin-left: max(5vw, 25px);
-    margin-top: 50px;
-    color: var(--light-text);
-    font-size: 16px;
-}
-.add form{
-    gap: 20px;
-}
-.add-img-upload img{
-    width: 120px;
-}
-.add-product-name .add-product-description{
-    width: max(40%,280px);
-}
-.add-product-name input, .add-product-description textarea{
-    padding: 10px;
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding-top: 24px;
+  color: var(--text-primary);
+  font-size: 16px;
 }
 
+.add-hero{
+  margin-bottom: 12px;
+}
+.add-hero h2{
+  margin: 0;
+  font-size: 26px;
+}
+.add-hero .muted{
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
+
+.add-form{
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: var(--panel-color);
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: var(--shadow-strong);
+}
+
+.add-section{
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 22px;
+}
+
+.label{
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.add-img-upload{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.upload-box{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 220px;
+  height: 220px;
+  border: 1px dashed var(--panel-border);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.02);
+  cursor: pointer;
+  transition: background-color .2s ease, box-shadow .2s ease, transform .05s ease, border-color .2s ease;
+}
+
+.upload-box:hover{
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.4);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+}
+
+.preview{
+  width: 92%;
+  height: 92%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.hint{
+  font-style: italic;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+/* Fields */
+.add-fields{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.add-product-name input,
+.add-product-description textarea,
+.add-product-name select,
+.selectt{
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--panel-border);
+  background-color: var(--body-color);
+  color: var(--text-primary);
+  resize: vertical;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.add-product-name input:focus,
+.add-product-description textarea:focus,
+.add-product-name select:focus{
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255,122,95,0.22);
+}
+
+/* Category + Price row */
 .add-category-price{
-    display: flex;
-    gap: 30px;  
-}
-.add-category-price select, .add-category-price input {
-    max-width: 120px;
-    padding: 10px;
-}
-.add-btn{
-    max-width: 120px;
-    border: none;
-    padding: 10px;
-    background-color: black;
-    color: white;
-    cursor: pointer;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
-label img[src*="assets/upload_area"] {
-    filter: var(--upload);
+.add-category select,
+.add-price input{
+  min-width: 200px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--panel-border);
+  background: var(--body-color);
+  color: var(--text-primary);
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.add-category select:focus,
+.add-price input:focus{
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255,122,95,0.22);
+}
+
+/* Submit button */
+.add-btn{
+  width: 200px;
+  border: none;
+  padding: 14px 14px;
+  background: linear-gradient(180deg, var(--accent), #f87171);
+  color: white;
+  font-weight: 900;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: filter .2s ease, box-shadow .2s ease, transform .05s ease;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+}
+
+.add-btn:hover{
+  filter: brightness(1.03);
+}
+
+.add-btn:active{
+  transform: translateY(1px);
+}
+
+.add-btn:disabled{
+  opacity: .6;
+  cursor: not-allowed;
+  filter: none;
+  box-shadow: none;
+}
+
+/* Responsive */
+@media (max-width: 900px){
+  .add{
+    width: 100%;
+    margin-left: 0;
+    padding: 0 16px;
+  }
+  .add-section{
+    grid-template-columns: 1fr;
+  }
+  .upload-box{
+    width: 200px;
+    height: 200px;
+  }
 }

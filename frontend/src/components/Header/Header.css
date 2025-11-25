@@ -1,9 +1,13 @@
 .header{
     height: 34vw;
-    margin: 30px auto;
-    background: url('/header_img.png') no-repeat;
-    background-size: contain;
+    max-width: 1400px;
+    width: 96%;
+    margin: 32px auto;
+    background: url('/header_img.png') no-repeat center center / cover;
     position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,.25);
 }
 
 .header-contents{

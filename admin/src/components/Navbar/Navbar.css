@@ -1,212 +1,80 @@
-.navbar{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 4%;
-}
-.navbar .logo{
-    width: max(10%,80px);
-}
-
-.navbar .profile{
-    width: 40px;
-}
-
-#visual-toggle-button{
-    width: 140px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
-    cursor: pointer;
-}
-/* checkbox */
-#visual-toggle{
-    appearance: none;
-    display: none;
+.admin-navbar{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 4%;
+  background: linear-gradient(120deg, var(--nav-color-one), var(--nav-color-two));
+  border-bottom: 1px solid var(--panel-border);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1200;
+  height: var(--nav-height);
+  backdrop-filter: blur(8px);
 }
 
-.svgIcon-toggle{
-    width: 25px;
+.nav-left{
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.moon-svg{
-    width: 13px;
-    position: absolute;
-    transition: all .3s;
-}
-.sun-svg{
-    opacity: 0;
-    transition: all .3s;
-}
-.lightmode .sun-svg{
-    filter: brightness(0);
-    transform: rotate(180deg);
-    opacity: 1;
-}
-.lightmode .moon-svg{
-    opacity: 0;
-}
-.animate .moon-svg{
-    transform: rotate(360deg);
-    transition: all .3s;
+.logo{
+  width: 120px;
 }
 
-.lightcolors .logo {
-    filter: none; 
+.brand{
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  color: var(--text-primary);
+}
+.brand-top{
+  font-weight: 800;
+  font-size: 15px;
+}
+.brand-sub{
+  font-size: 13px;
+  color: var(--text-secondary);
 }
 
-
-:root .addd {
-    filter: var(--logos-filter); 
+.nav-right{
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.lightcolors .addd {
-    filter: none; 
+.pill-btn{
+  border: 1px solid var(--panel-border);
+  background: var(--panel-color);
+  color: var(--text-primary);
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all .2s ease;
+}
+.pill-btn.ghost{
+  background: rgba(255,255,255,0.05);
+}
+.pill-btn:hover{
+  filter: brightness(1.05);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+}
+.pill-btn:active{
+  transform: translateY(1px);
 }
 
-:root .listt {
-    filter: var(--logos-filter); 
+.logout-btn{
+  border: 1px solid rgba(255,255,255,0.18);
+  background: linear-gradient(180deg, var(--accent), #f87171);
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 800;
+  box-shadow: 0 6px 14px rgba(0,0,0,.35);
 }
-
-.lightcolors .listt {
-    filter: none; 
-}
-
-:root .orderr {
-    filter: var(--logos-filter); 
-}
-
-.lightcolors .orderr {
-    filter: none; 
-}
-
-:root p{
-    color: var(--light-text);
-}
-
-.lightcolors p{
-    filter: none;
-}
-
-:root .list-table-format.title{
-    background-color: var(--body-color);
-}
-
-.lightcolors .list-table-format.title{
-    filter: none;
-}
-
-:root .add-product-name input:focus,
-:root .add-product-description textarea:focus {
-    outline: black;
-}
-
-
-
-.lightmode .add-product-name input:focus,
-.lightmode .add-product-description textarea:focus {
-    outline: black;
-}
-
-
-/* DARK MODE FOR PRODUCTNAME & PRODUCTDESCRIPTION */
-:root .add-product-name input,
-:root .add-product-description textarea {
-    background-color: var(--background-root);
-    border: var(--border-root);
-    padding: var(--padding-root);
-    color: white; /* Add this line to set text color to white */
-}
-
-/* LIGHT MODE FOR PRODUCTNAME & PRODUCTDESCRIPTION */
-.lightcolors .add-product-name input,
-.lightcolors .add-product-description textarea {
-    background-color: white; /* Background color for light mode */
-    border: 2px solid gray; /* Border color for light mode */
-    color: black;
-}
-
-:root .add-product-name input::placeholder,
-:root .add-product-description textarea::placeholder {
-    color: gray; /* Set the placeholder text color to white */
-}
-
-.lightcolors .add-product-name input::placeholder,
-.lightcolors .add-product-description textarea::placeholder {
-    color: black;
-}
-
-
-:root .inputclasa,
-:root .selectt {
-    color: white;
-    border: 1px solid white;
-    background-color: black; 
-}
-
-
-.lightcolors .inputclasa,
-.lightcolors .selectt {
-    border: 1px solid gray;
-    background-color: transparent; 
-    color: black;
-}
-
-:root .inputclasa::placeholder,
-:root .selectt::placeholder {
-    color: gray;
-}
-
-
-
-
-:root .profile {
-    filter: var(--logos-filter); 
-}
-
-.lightcolors .profile {
-    filter: none; 
-}
-
-
-:root {
-    --input-color: black; /* Define custom color for input elements */
-    --background-root: black;
-    --border-root: 2px solid white;
-    --padding-root: 10px;
-    --upload: brightness(1) invert(1); /* Added a custom variable */
-    --logos-filter: brightness(0) invert(1); /* Added a custom variable */
-    --sidebar: black;
-    --border-color: #27272a;
-    --nav-color-one: #0d0d179a;
-    --nav-color-two: #0d0618;
-    --body-color: #121212;
-    --dark-text: #101010;
-    --light-text: #ffffff;
-    --light-text-secondary: #b9b9b9;
-    --light-text-desc: #d8d8d8;
-}
-
-/* For lightcolors */
-.lightcolors {
-    --sidebar: #fff0ed;
-    --body-color: #FFFFFF;
-    --dark-text: #fff;
-    --light-text: #101010;
-    --nav-color-two: #f6f6f2;
-    --nav-color-one: #f1f1f17e;
-    --border-color: #ddd;
-    --light-text-secondary: #464853;
-    --light-text-desc: #020202;
-    --cards-text-color: #fff; /* White text color for cards container */
-}
-
-/* Reset filter for images with class "image" in light mode */
-.lightcolors label img.image {
-    filter: none; /* Reset filter for images with class "image" in light mode */
-}
-
+.logout-btn:hover{ filter: brightness(1.03); }
+.logout-btn:active{ transform: translateY(1px); }

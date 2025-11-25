@@ -1,30 +1,56 @@
-.app-download{
-    margin: auto auto;
-    margin-top: 100px;
-    font-size: max(3vw, 20px);
-    text-align: center;
-    font-weight: 500;
+.app-download {
+  margin: auto auto;
+  margin-top: 100px;
+  font-size: max(3vw, 20px);
+  text-align: center;
+  font-weight: 500;
+  padding: 16px;
+  background: transparent;
 }
-.app-download-platforms{
-    display: flex;
-    justify-content: center;
-    gap: max(2vw, 10px);
-    margin-top: 40px;
+.app-download-platforms {
+  display: flex;
+  justify-content: center;
+  gap: max(2vw, 10px);
+  margin-top: 40px;
 }
-.app-download-platforms img{
-    width: max(30vw, 120px);
-    max-width: 180px;
-    transition: 0.5s;
-    cursor: pointer;
+/* Tiêu đề (For Better Experience Download) */
+.pforbetter, .app-download .title, .app-download h1{
+  color: var(--light-text);  
+  font-weight: 700;
+  margin: 0 0 6px 0;
 }
-.app-download-platforms img:hover{
-    transform: scale(1.05);
+
+.app-download-platforms img {
+  width: max(30vw, 120px);
+  max-width: 180px;
+  transition: 0.5s;
+  cursor: pointer;
+}
+.app-download-platforms img:hover {
+  transform: scale(1.05);
 }
 
 :root .pforbetter {
-    color: white;
+  color: white;
 }
 
 .lightcolors .pforbetter {
-    color: black; 
+  color: black;
+}
+
+/* Badge store (nút App Store/Play Store) */
+.app-download .badges{
+  display: inline-flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.app-download .badges img{
+  width: auto; height: auto;
+  display: block;
+  transition: transform .08s ease, filter .2s ease;
+}
+.app-download .badges img:hover{
+  transform: translateY(-1px);
+  filter: brightness(1.03);
 }
