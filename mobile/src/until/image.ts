@@ -1,18 +1,17 @@
-// mobile/src/until/image.ts
-import { getLocalImageSource } from "./localImages";
+﻿import { getLocalImageSource } from "./localImages";
+import { API_URL } from "../api/client";
 
-export const API_URL = "https://hangry-backend.onrender.com";
-
-// Trả về URI string (cho remote) hoặc null (nếu không có)
 export function getRemoteImageUrl(image?: string | null) {
   if (!image) return null;
   if (image.startsWith("http")) return image;
   return `${API_URL}/images/${image}`;
 }
 
-// Trả về source cho <Image />:
-// - Nếu có local asset: trả require(...)
-// - Nếu không: trả { uri: remoteUrl } hoặc null
+// Return string URL for remote images (legacy helper)
+export function getImageUrl(image?: string | null) {
+  return getRemoteImageUrl(image);
+}
+
 export function resolveImageSource(image?: string | null) {
   const localSrc = getLocalImageSource(image);
   if (localSrc) return localSrc;

@@ -15,14 +15,18 @@ import { useCartStore } from "../lib/store/cart";
 
 type DraftItem = {
   name: string;
+  nameEn?: string;
   price: number;
   quantity: number;
+  restaurantId?: string;
+  deliveryModes?: string[];
 };
 
 type Draft = {
   address: any;
   items: DraftItem[];
   amount: number;
+  deliveryType?: string;
 };
 
 export default function PaymentModal({
@@ -63,8 +67,11 @@ export default function PaymentModal({
     if (draft?.items && draft?.amount) return draft;
     const items: DraftItem[] = itemsInStore.map((i) => ({
       name: i.name,
+      nameEn: (i as any)?.nameEn,
       price: i.price,
       quantity: i.quantity,
+      restaurantId: (i as any)?.restaurantId,
+      deliveryModes: (i as any)?.deliveryModes,
     }));
     const subtotal = items.reduce(
       (sum, it) => sum + Number(it.price || 0) * it.quantity,
@@ -107,10 +114,14 @@ export default function PaymentModal({
     address: data.address || {},
     items: data.items.map((i) => ({
       name: i.name,
+      nameEn: i.nameEn,
       price: i.price,
       quantity: i.quantity,
+      restaurantId: i.restaurantId,
+      deliveryModes: i.deliveryModes,
     })),
     amount: data.amount,
+    deliveryType: data.deliveryType || "driver",
   });
 
   const handleExpiryChange = (text: string) => {

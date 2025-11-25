@@ -1,15 +1,12 @@
 import { FlatList, TouchableOpacity, Text, View, StyleSheet } from "react-native";
 import type { Category } from "../constants/categories";
+import { useUI } from "../hooks/useUI";
+import { BrandColors } from "../constants/theme";
 
-export default function CategoryChips({
-  categories,
-  selected,
-  onSelect,
-}: {
-  categories: Category[];
-  selected: string;                // key hiện đang chọn
-  onSelect: (key: string) => void; // gọi khi bấm chip
-}) {
+export default function CategoryChips({ categories, selected, onSelect }: { categories: Category[]; selected: string; onSelect: (key: string) => void; }) {
+  const { theme, t } = useUI();
+  const isDark = theme === "dark";
+
   return (
     <View style={{ marginTop: 12 }}>
       <FlatList
@@ -25,11 +22,21 @@ export default function CategoryChips({
               onPress={() => onSelect(item.key)}
               style={[
                 s.chip,
-                active ? s.chipActive : s.chipInactive,
+                active
+                  ? { backgroundColor: BrandColors.primary, borderColor: BrandColors.primary }
+                  : {
+                      backgroundColor: isDark ? "#252834" : BrandColors.mutedPill,
+                      borderColor: isDark ? "#252834" : BrandColors.borderLight,
+                    },
               ]}
             >
-              <Text style={[s.chipText, active ? s.chipTextActive : s.chipTextInactive]}>
-                {item.label}
+              <Text
+                style={[
+                  s.chipText,
+                  { color: active ? "#fff" : isDark ? "#f8fafc" : "#111" },
+                ]}
+              >
+                {item.key === "All" ? t("all") : item.label}
               </Text>
             </TouchableOpacity>
           );
@@ -46,22 +53,13 @@ const s = StyleSheet.create({
     borderRadius: 999,
     marginRight: 8,
     borderWidth: 1,
-  },
-  chipInactive: {
-    backgroundColor: "#fff",
-    borderColor: "#e5e7eb",
-  },
-  chipActive: {
-    backgroundColor: "#111",
-    borderColor: "#111",
+    shadowColor: "rgba(0,0,0,0.12)",
+    shadowOpacity: 0.8,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 6,
+    elevation: 2,
   },
   chipText: {
-    fontWeight: "700",
-  },
-  chipTextInactive: {
-    color: "#111",
-  },
-  chipTextActive: {
-    color: "#fff",
+    fontFamily: "BeVietnamPro_600SemiBold",
   },
 });

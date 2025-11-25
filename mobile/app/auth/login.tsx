@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Buffer } from "buffer";
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
 import { useRouter, useLocalSearchParams, type Href } from "expo-router";
 import client from "../../src/api/client";
@@ -8,6 +9,7 @@ export default function LoginScreen() {
   const router = useRouter();
   const { returnTo } = useLocalSearchParams<{ returnTo?: string }>();
   const setToken = useAuthStore((s) => s.setToken);
+  const setUser = useAuthStore((s) => s.setUser);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -48,12 +50,28 @@ export default function LoginScreen() {
         res.data?.jwt ??
         res.data?.accessToken ??
         null;
+      const role = res.data?.role || res.data?.data?.role;
+      const restaurantIds = res.data?.restaurantIds || res.data?.data?.restaurantIds || [];
+
+      const userId =
+        typeof token === "string"
+          ? (() => {
+              try {
+                const payload = JSON.parse(
+                  Buffer.from(token.split(".")[1], "base64").toString("utf8")
+                );
+                return payload.id || payload.userId || null;
+              } catch {
+                return null;
+              }
+            })()
+          : null;
 
       if (!token) {
         throw new Error(res.data?.message || "Account does not exist or Password is incorrect.");
       }
 
-      setToken(token);
+      setUser({ token, userId, role, restaurantIds });
       Alert.alert("Success", "Login Successful !!!");
 
       const toRaw = typeof returnTo === "string" ? safeDecode(returnTo) : undefined;

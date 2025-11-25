@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,34 +7,34 @@ import {
   FlatList,
   Alert,
   StyleSheet,
+  SafeAreaView,
 } from "react-native";
 import { useRouter } from "expo-router";
-import client from "../../src/api/client";
+import { Ionicons } from "@expo/vector-icons";
 import { useCartStore, type Item as CartItem } from "../../lib/store/cart";
 import { useAuthStore } from "../../lib/store/auth";
 import { resolveImageSource } from "../../src/until/image";
+import { useUI } from "../../hooks/useUI";
+import { Colors, BrandColors } from "../../constants/theme";
 
 export default function CartScreen() {
   const router = useRouter();
-
-  // Lấy selector riêng để tránh loop render
   const items = useCartStore((s) => s.items);
   const inc = useCartStore((s) => s.inc);
   const dec = useCartStore((s) => s.dec);
   const remove = useCartStore((s) => s.remove);
   const clearCart = useCartStore((s) => s.clearCart);
   const total = useCartStore((s) => s.total);
-
   const token = useAuthStore((s) => s.token);
-
-  // Track images that failed to load per item id
   const [failed, setFailed] = useState<Record<string, boolean>>({});
+  const { t, formatMoney, theme, toggleLang, toggleTheme, lang } = useUI();
+  const palette = Colors[theme as keyof typeof Colors];
 
   const placeOrder = async () => {
     if (!token) {
-      Alert.alert("Sign in required", "Please sign in to place your order.", [
+      Alert.alert(t("signInRequired"), t("signInToContinue"), [
         {
-          text: "Sign in",
+          text: t("signIn"),
           onPress: () =>
             router.push({
               pathname: "/auth/login",
@@ -46,99 +46,76 @@ export default function CartScreen() {
       return;
     }
 
-    try {
-      const payload = {
-        items: items.map((i) => ({
-          name: i.name,
-          price: i.price,
-          quantity: i.quantity,
-        })),
-        amount: total(),
-        address: {},
-      };
-
-      const res = await client.post("/api/order/place", payload);
-
-      if (res.data?.success) {
-        clearCart();
-        router.push("/(tabs)/orders");
-      } else {
-        throw new Error(res.data?.message || "Unknown error");
-      }
-    } catch (e: any) {
-      Alert.alert("Error", e?.response?.data?.message || e.message);
+    if (!items.length) {
+      Alert.alert(t("emptyCart"), "");
+      return;
     }
+
+    // Giữ giỏ; thanh toán sẽ xử lý thành công rồi mới clear
+    router.push("/(tabs)/orders");
   };
 
   const renderItem = ({ item }: { item: CartItem }) => {
     const src = resolveImageSource(item.image);
-    const displaySrc =
-      failed[item._id]
-        ? require("../../assets/images/food_item_2.png")
-        : (src as any);
+    const displaySrc = failed[item._id]
+      ? require("../../assets/images/food_item_2.png")
+      : (src as any);
 
     return (
-      <View style={s.card}>
+      <View style={[s.card, { backgroundColor: palette.card, borderColor: palette.border }]}>
         {src ? (
           <Image
             source={displaySrc}
             style={s.img}
             resizeMode="cover"
-            // If image fails, switch to banner fallback
-            onError={() =>
-              setFailed((prev) => ({ ...prev, [item._id]: true }))
-            }
+            onError={() => setFailed((prev) => ({ ...prev, [item._id]: true }))}
           />
         ) : (
-          <View style={[s.img, { backgroundColor: "#f3f3f3" }]} />
+          <View style={[s.img, { backgroundColor: palette.pill }]} />
         )}
 
         <View style={{ flex: 1, paddingHorizontal: 12 }}>
-          <Text style={s.name} numberOfLines={1}>
+          <Text style={[s.name, { color: palette.text }]} numberOfLines={1}>
             {item.name}
           </Text>
 
-          <Text style={s.price}>${Number(item.price).toLocaleString()}</Text>
+          <Text style={[s.price, { color: BrandColors.primary }]}>{formatMoney(Number(item.price))}</Text>
 
           <View style={s.row}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <TouchableOpacity
                 onPress={() => {
                   if (item.quantity === 1) {
-                    Alert.alert(
-                      "Confirm Removal",
-                      "Remove this item from the cart?",
-                      [
-                        { text: "Cancel", style: "cancel" },
-                        { text: "Remove", onPress: () => remove(item._id) },
-                      ]
-                    );
+                    Alert.alert(t("clearCart"), t("clearCart"), [
+                      { text: "Cancel", style: "cancel" },
+                      { text: t("remove"), onPress: () => remove(item._id) },
+                    ]);
                   } else {
                     dec(item._id);
                   }
                 }}
-                style={s.qtyBtn}
+                style={[s.qtyBtn, { borderColor: palette.border }]}
               >
-                <Text style={s.qtyText}>-</Text>
+                <Text style={[s.qtyText, { color: palette.text }]}>-</Text>
               </TouchableOpacity>
 
-              <Text style={s.qtyValue}>{item.quantity}</Text>
+              <Text style={[s.qtyValue, { color: palette.text }]}>{item.quantity}</Text>
 
-              <TouchableOpacity onPress={() => inc(item._id)} style={s.qtyBtn}>
-                <Text style={s.qtyText}>+</Text>
+              <TouchableOpacity onPress={() => inc(item._id)} style={[s.qtyBtn, { borderColor: palette.border }]}>
+                <Text style={[s.qtyText, { color: palette.text }]}>+</Text>
               </TouchableOpacity>
             </View>
 
             <TouchableOpacity
               onPress={() =>
-                Alert.alert("Remove Item", "Are you sure?", [
+                Alert.alert(t("clearCart"), t("clearCart"), [
                   { text: "Cancel", style: "cancel" },
-                  { text: "Remove", onPress: () => remove(item._id) },
+                  { text: t("remove"), onPress: () => remove(item._id) },
                 ])
               }
               style={s.removeBtn}
             >
-              <Text style={s.removeText}>Remove</Text>
+              <Ionicons name="trash-outline" size={18} color="#ef4444" />
             </TouchableOpacity>
           </View>
         </View>
@@ -147,12 +124,46 @@ export default function CartScreen() {
   };
 
   const subTotal = total();
-  const delivery = items.length ? 2 : 0; // phí ship
+  const delivery = items.length ? 20000 : 0;
   const grandTotal = subTotal + delivery;
 
   return (
-    <View style={{ flex: 1, padding: 16 }}>
-      <Text style={s.title}>My Cart</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: palette.background }}>
+      <View style={{ paddingHorizontal: 16, paddingTop: 10 }}>
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+          <Text style={[s.title, { color: palette.text }]}>{t("cartTitle")}</Text>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+            <TouchableOpacity
+              onPress={toggleLang}
+              style={{
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+                borderRadius: 999,
+                borderWidth: 1,
+                borderColor: palette.border,
+                backgroundColor: palette.pill,
+              }}
+            >
+              <Text style={{ fontFamily: "BeVietnamPro_600SemiBold", color: palette.text }}>{lang.toUpperCase()}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={toggleTheme}
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: 19,
+                borderWidth: 1,
+                borderColor: palette.border,
+                backgroundColor: palette.pill,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Ionicons name={theme === "dark" ? "moon" : "sunny"} size={20} color={BrandColors.primary} />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
 
       <FlatList<CartItem>
         data={items}
@@ -161,69 +172,69 @@ export default function CartScreen() {
         ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
         ListEmptyComponent={
           <View style={s.empty}>
-            <Text style={{ color: "#666", marginTop: 8 }}>
-              Your cart is empty.
+            <Text style={{ color: palette.textSecondary, marginTop: 8 }}>
+              {t("emptyCart")}
             </Text>
           </View>
         }
         contentContainerStyle={{ paddingBottom: 20 }}
       />
 
-      <View style={s.summary}>
+      <View style={[s.summary, { backgroundColor: palette.card, borderColor: palette.border }]}>
         <View style={s.sumRow}>
-          <Text style={s.sumLabel}>Subtotal</Text>
-          <Text style={s.sumValue}>${subTotal.toLocaleString()}</Text>
+          <Text style={[s.sumLabel, { color: palette.textSecondary }]}>{t("subtotal")}</Text>
+          <Text style={[s.sumValue, { color: palette.text }]}>{formatMoney(subTotal)}</Text>
         </View>
 
         <View style={s.sumRow}>
-          <Text style={s.sumLabel}>Delivery</Text>
-          <Text style={s.sumValue}>${delivery.toLocaleString()}</Text>
+          <Text style={[s.sumLabel, { color: palette.textSecondary }]}>{t("deliveryFee")}</Text>
+          <Text style={[s.sumValue, { color: palette.text }]}>{formatMoney(delivery)}</Text>
         </View>
 
         <View style={[s.sumRow, { marginTop: 6 }]}>
-          <Text style={s.totalLabel}>Total</Text>
-          <Text style={s.totalValue}>${grandTotal.toLocaleString()}</Text>
+          <Text style={[s.totalLabel, { color: BrandColors.primaryStrong }]}>{t("total")}</Text>
+          <Text style={[s.totalValue, { color: BrandColors.primaryStrong }]}>{formatMoney(grandTotal)}</Text>
         </View>
 
         <View style={{ rowGap: 10, marginTop: 12 }}>
-          {/* Row 1: Continue + Clear */}
           <View style={{ flexDirection: "row", gap: 10 }}>
             <TouchableOpacity
               onPress={() => router.push("/")}
-              style={s.shopBtnText}
+              style={[
+                s.shopBtnText,
+                { backgroundColor: palette.pill, borderColor: palette.border },
+              ]}
             >
-              <Text style={s.secondaryBtnText}>Order More</Text>
+              <Text style={[s.secondaryBtnText, { color: palette.text }]}>{t("orderMore")}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                Alert.alert(
-                  "Confirm Clear Cart",
-                  "Delete all items in your cart?",
-                  [
-                    { text: "Cancel", style: "cancel" },
-                    { text: "Clear", onPress: () => clearCart() },
-                  ],
-                  { cancelable: false }
-                );
+                Alert.alert(t("clearCart"), t("clearCart"), [
+                  { text: "Cancel", style: "cancel" },
+                  { text: t("clearCart"), onPress: () => clearCart() },
+                ]);
               }}
               disabled={!items.length}
-              style={[s.clearBtnText, !items.length && { opacity: 0.5 }]}
+              style={[
+                s.clearBtnText,
+                { backgroundColor: palette.pill, borderColor: palette.border },
+                !items.length && { opacity: 0.5 },
+              ]}
             >
-              <Text style={s.secondaryBtnText}>Clear Cart</Text>
+              <Text style={[s.secondaryBtnText, { color: palette.text }]}>{t("clearCart")}</Text>
             </TouchableOpacity>
           </View>
 
-          {/* Row 2: Place Order (full width) */}
           <TouchableOpacity
-            onPress={() => router.push("/(tabs)/orders")}
+            onPress={placeOrder}
             disabled={!items.length}
             style={[s.primaryBtn, s.blockBtn, !items.length && { opacity: 0.5 }]}
           >
-            <Text style={s.primaryBtnText}>PLACE ORDER</Text>
+            <Text style={s.primaryBtnText}>{t("checkout")}</Text>
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -234,15 +245,13 @@ const s = StyleSheet.create({
   card: {
     flexDirection: "row",
     padding: 10,
-    backgroundColor: "#fff",
     borderRadius: 16,
     marginVertical: 6,
     borderWidth: 1,
-    borderColor: "#eee",
   },
   img: { width: 86, height: 86, borderRadius: 12 },
   name: { fontWeight: "900", fontSize: 16 },
-  price: { color: "#666", marginTop: 4, fontStyle: "italic" },
+  price: { marginTop: 4, fontStyle: "italic" },
 
   row: {
     flexDirection: "row",
@@ -253,7 +262,6 @@ const s = StyleSheet.create({
 
   qtyBtn: {
     borderWidth: 1.2,
-    borderColor: "#f75f00ff",
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 28,
@@ -262,14 +270,11 @@ const s = StyleSheet.create({
   qtyValue: { minWidth: 24, textAlign: "center" },
 
   removeBtn: { paddingHorizontal: 8, paddingVertical: 6 },
-  removeText: { color: "#ef4444", fontWeight: "700", fontStyle: "italic" },
 
   summary: {
-    backgroundColor: "#fff",
     borderRadius: 16,
     padding: 14,
     borderWidth: 1,
-    borderColor: "#eee",
     marginTop: 8,
   },
   sumRow: {
@@ -277,14 +282,14 @@ const s = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 6,
   },
-  sumLabel: { color: "#666", fontStyle: "italic" },
+  sumLabel: { fontStyle: "italic" },
   sumValue: { fontWeight: "800", fontStyle: "italic" },
-  totalLabel: { color: "#e90303ff", fontSize: 16, fontWeight: "900" },
-  totalValue: { color: "#e90303ff", fontSize: 16, fontWeight: "900" },
+  totalLabel: { fontSize: 16, fontWeight: "900" },
+  totalValue: { fontSize: 16, fontWeight: "900" },
 
   primaryBtn: {
     flex: 1,
-    backgroundColor: "#111",
+    backgroundColor: BrandColors.primary,
     padding: 14,
     borderRadius: 12,
     alignItems: "center",
@@ -293,22 +298,18 @@ const s = StyleSheet.create({
 
   shopBtnText: {
     flex: 1,
-    backgroundColor: "#f4ddda79",
     padding: 14,
     borderRadius: 12,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#111",
   },
   clearBtnText: {
     flex: 1,
-    backgroundColor: "#3837372e",
     padding: 14,
     borderRadius: 12,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#111",
   },
-  secondaryBtnText: { fontStyle: "italic", color: "#111", fontWeight: "900" },
+  secondaryBtnText: { fontStyle: "italic", fontWeight: "900" },
   blockBtn: { flex: undefined, width: "100%" },
 });

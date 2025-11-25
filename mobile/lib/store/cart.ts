@@ -3,9 +3,12 @@ import { create } from "zustand";
 export type Item = {
   _id: string;
   name: string;
+  nameEn?: string;
   price: number;
   image?: string | null;
   quantity: number;
+  restaurantId?: string;
+  deliveryModes?: string[];
 };
 
 type Addable =
@@ -13,10 +16,13 @@ type Addable =
       _id?: string;
       id?: string;
       name: string;
+      nameEn?: string;
       price: number;
       image?: string | null;
       quantity?: number;
       qty?: number;
+      restaurantId?: string;
+      deliveryModes?: string[];
     };
 
 type CartState = {
@@ -40,11 +46,18 @@ export const useCartStore = create<CartState>((set, get) => ({
 
       const qtyToAdd = Number(it.quantity ?? it.qty ?? 1) || 1;
       const price = Number(it.price || 0);
+      const nameEn = (it as any)?.nameEn;
 
       const idx = s.items.findIndex((x) => x._id === _id);
       if (idx >= 0) {
         const next = [...s.items];
-        next[idx] = { ...next[idx], quantity: next[idx].quantity + qtyToAdd };
+        next[idx] = {
+          ...next[idx],
+          quantity: next[idx].quantity + qtyToAdd,
+          restaurantId: next[idx].restaurantId || it.restaurantId,
+          deliveryModes: next[idx].deliveryModes || it.deliveryModes,
+          nameEn: next[idx].nameEn || nameEn,
+        };
         return { items: next };
       }
       return {
@@ -56,6 +69,9 @@ export const useCartStore = create<CartState>((set, get) => ({
             price,
             image: it.image ?? null,
             quantity: qtyToAdd,
+            restaurantId: it.restaurantId,
+            deliveryModes: it.deliveryModes,
+            nameEn,
           },
         ],
       };

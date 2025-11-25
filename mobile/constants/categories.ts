@@ -1,10 +1,9 @@
-export type Category = {
-  key: string;   // giá trị dùng để filter (so sánh với item.category từ BE)
-  label: string; // hiển thị
+﻿export type Category = {
+  key: string;   // value used to filter (compare with item.category from backend)
+  label: string; // display label (translated in UI if needed)
 };
 
-// 8 loại phổ biến như web (đồng bộ các key với dữ liệu của bạn)
-// Lưu ý: backend của bạn đang dùng "Deserts" (không phải "Desserts") → giữ nguyên "Deserts".
+// Backend currently returns "Deserts" (not "Desserts"), keep keys aligned.
 export const CATEGORIES: Category[] = [
   { key: "All",      label: "All" },
   { key: "Salad",    label: "Salad" },
