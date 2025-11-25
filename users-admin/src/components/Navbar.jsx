@@ -1,18 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
+import useUI from '../ui/useUI.jsx'
+import useAuth from '../auth/useAuth.jsx'
+import { toast } from 'react-toastify'
 
 export default function Navbar() {
-  const [light, setLight] = useState(false)
-  useEffect(() => {
-    const saved = localStorage.getItem('users_admin_theme') === 'light'
-    setLight(saved)
-    document.body.classList.toggle('light', saved)
-  }, [])
-  const toggle = () => {
-    const next = !light
-    setLight(next)
-    localStorage.setItem('users_admin_theme', next ? 'light' : 'dark')
-    document.body.classList.toggle('light', next)
-  }
+  const { theme, lang, toggleTheme, toggleLang, t } = useUI()
+  const { logout } = useAuth()
+  const modeIcon = theme === 'light' ? '🌞' : '🌙'
+  const langLabel = lang === 'vi' ? 'VI' : 'EN'
+
   return (
     <header className="nav fancy-header">
       <div className="nav-left">
@@ -20,31 +16,33 @@ export default function Navbar() {
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.6"/>
             <path d="M4 20c1.5-3.5 4.5-5 8-5s6.5 1.5 8 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-            <path d="M17.5 3.5l3 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-            <path d="M20.5 3.5l-3 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
           </svg>
         </div>
         <span className="brand">
-          USERS ADMIN
+          {t("appName")}
+          <span className="brand-badge">ADMIN</span>
         </span>
       </div>
 
-      <button
-        className={`mode-toggle ${light ? 'is-light' : ''}`}
-        onClick={toggle}
-        aria-label="Toggle theme"
-        title={light ? 'Switch to Dark' : 'Switch to Light'}
-      >
-        <svg className="sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18">
-          <g fill="currentColor">
-            <circle r="5" cy="12" cx="12"></circle>
-            <path d="m21 13h-1a1 1 0 0 1 0-2h1a1 1 0 0 1 0 2zm-17 0h-1a1 1 0 0 1 0-2h1a1 1 0 0 1 0 2zm13.66-5.66a1 1 0 0 1 -.66-.29 1 1 0 0 1 0-1.41l.71-.71a1 1 0 1 1 1.41 1.41l-.71.71a1 1 0 0 1 -.75.29zm-12.02 12.02a1 1 0 0 1 -.71-.29 1 1 0 0 1 0-1.41l.71-.66a1 1 0 0 1 1.41 1.41l-.71.71a1 1 0 0 1 -.7.24zm6.36-14.36a1 1 0 0 1 -1-1v-1a1 1 0 0 1 2 0v1a1 1 0 0 1 -1 1zm0 17a1 1 0 0 1 -1-1v-1a1 1 0 0 1 2 0v1a1 1 0 0 1 -1 1zm-5.66-14.66a1 1 0 0 1 -.7-.29l-.71-.71a1 1 0 0 1 1.41-1.41l.71.71a1 1 0 0 1 0 1.41 1 1 0 0 1 -.71.29zm12.02 12.02a1 1 0 0 1 -.7-.29l-.66-.71a1 1 0 0 1 1.36-1.36l.71.71a1 1 0 0 1 0 1.41 1 1 0 0 1 -.71.24z"></path>
-          </g>
-        </svg>
-        <svg className="moon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 384 512" width="16" height="16">
-          <path d="m223.5 32c-123.5 0-223.5 100.3-223.5 224s100 224 223.5 224c60.6 0 115.5-24.2 155.8-63.4 5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6-96.9 0-175.5-78.8-175.5-176 0-65.8 36-123.1 89.3-153.3 6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z"></path>
-        </svg>
-      </button>
+      <div className="nav-actions">
+        <button className="mode-toggle" onClick={toggleTheme} aria-label="Toggle theme">
+          {modeIcon}
+        </button>
+        <button className="mode-toggle" onClick={toggleLang} aria-label="Toggle language">
+          {langLabel}
+        </button>
+        <button
+          className="pill-btn danger"
+          onClick={() => {
+            if (window.confirm(t("confirmLogout") || "Logout?")) {
+              logout()
+              toast.success(t("logout"))
+            }
+          }}
+        >
+          {t("logout")}
+        </button>
+      </div>
     </header>
   )
 }
