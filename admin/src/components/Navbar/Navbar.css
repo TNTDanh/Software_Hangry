@@ -3,8 +3,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 4%;
-  background: linear-gradient(90deg, var(--nav-color-one), var(--nav-color-two));
-  border-bottom: 1px solid var(--border-color);
+  background: linear-gradient(120deg, var(--nav-color-one), var(--nav-color-two));
+  border-bottom: 1px solid var(--panel-border);
   position: fixed;
   top: 0;
   left: 0;
@@ -17,103 +17,64 @@
 .nav-left{
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .logo{
-  width: max(10%, 80px);
+  width: 120px;
 }
 
 .brand{
-  font-weight: 900;
-  letter-spacing: .5px;
-  color: var(--light-text);
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  color: var(--text-primary);
+}
+.brand-top{
+  font-weight: 800;
+  font-size: 15px;
+}
+.brand-sub{
+  font-size: 13px;
+  color: var(--text-secondary);
 }
 
 .nav-right{
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
 }
 
-.profile{
-  width: 40px;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-}
-
-.mode-toggle{
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 36px;
-  border: 1px solid var(--border-color);
-  background: transparent;
-  border-radius: 8px;
+.pill-btn{
+  border: 1px solid var(--panel-border);
+  background: var(--panel-color);
+  color: var(--text-primary);
+  padding: 8px 12px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: background-color .2s ease, box-shadow .2s ease;
+  font-weight: 700;
+  transition: all .2s ease;
 }
-
-.mode-toggle:hover{
-  background: rgba(255,255,255,0.06);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+.pill-btn.ghost{
+  background: rgba(255,255,255,0.05);
 }
-
-.scroll-top{
-  position: fixed;
-  right: 24px;
-  bottom: 28px;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  border: none;
-  cursor: pointer;
-  background: linear-gradient(180deg, #ff7b4d, #ff5c30);
-  color: #fff;
-  font-size: 20px;
-  font-weight: 900;
-  box-shadow: 0 12px 30px rgba(255,92,48,0.45);
-  z-index: 1200;
-  transition: filter .2s ease, box-shadow .2s ease, transform .05s ease;
+.pill-btn:hover{
+  filter: brightness(1.05);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.2);
 }
-.scroll-top:hover{
-  filter: brightness(0.98);
-  box-shadow: 0 14px 32px rgba(255,92,48,0.55);
-}
-.scroll-top:active{
+.pill-btn:active{
   transform: translateY(1px);
 }
 
-.mode-toggle .sun,
-.mode-toggle .moon{
-  width: 18px;
-  height: 18px;
-  position: absolute;
-  transition: opacity .25s ease, transform .25s ease;
+.logout-btn{
+  border: 1px solid rgba(255,255,255,0.18);
+  background: linear-gradient(180deg, var(--accent), #f87171);
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 800;
+  box-shadow: 0 6px 14px rgba(0,0,0,.35);
 }
-
-.mode-toggle .sun{ opacity: 0; transform: rotate(-90deg); }
-.mode-toggle .moon{ opacity: 1; transform: rotate(0deg); }
-
-.mode-toggle.lightmode .sun{ opacity: 1; transform: rotate(0deg); filter: brightness(0); }
-.mode-toggle.lightmode .moon{ opacity: 0; transform: rotate(90deg); }
-
-/* Icon trong Navbar: dark -> trắng, light -> bình thường */
-:root .navbar img.logo,
-:root .navbar .profile{
-filter: brightness(0) invert(1) contrast(105%);
-}
-.lightcolors .navbar img.logo,
-.lightcolors .navbar .profile{
-filter: none;
-}
-
-/* Nếu có icon trong menu dropdown Nav (bag/logout) */
-:root .nav-profile-dropdown img{
-filter: brightness(0) invert(1) contrast(105%);
-}
-.lightcolors .nav-profile-dropdown img{
-filter: none;
-}
+.logout-btn:hover{ filter: brightness(1.03); }
+.logout-btn:active{ transform: translateY(1px); }

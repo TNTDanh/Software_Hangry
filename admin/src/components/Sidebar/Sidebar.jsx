@@ -1,40 +1,33 @@
 import React from 'react'
 import './Sidebar.css'
+import { Link, useLocation } from 'react-router-dom'
 import { assets } from '../../assets/assets'
-import { NavLink } from 'react-router-dom'
+import useUI from '../../ui/useUI.jsx'
 
-const Sidebar = () => {
+const Sidebar = ({ role }) => {
+  const location = useLocation()
+  const { t } = useUI()
+  const isActive = (path) => location.pathname.startsWith(path)
+
   return (
-    <aside className="sidebar admin-sidebar">
-      <div className="sidebar-header">
-        <span className="sidebar-title">MENU</span>
-      </div>
-
-      <nav className="sidebar-options">
-        <NavLink
-          to="/add"
-          className={({ isActive }) => `sidebar-option${isActive ? ' active' : ''}`}
-        >
-          <img className="addd" src={assets.add_icon} alt="" />
-          <p>ADD ITEMS</p>
-        </NavLink>
-
-        <NavLink
-          to="/list"
-          className={({ isActive }) => `sidebar-option${isActive ? ' active' : ''}`}
-        >
-          <img className="listt" src={assets.order_icon} alt="" />
-          <p>LIST ITEMS</p>
-        </NavLink>
-
-        <NavLink
-          to="/orders"
-          className={({ isActive }) => `sidebar-option${isActive ? ' active' : ''}`}
-        >
-          <img className="orderr" src={assets.order_icon} alt="" />
-          <p>ORDERS</p>
-        </NavLink>
-      </nav>
+    <aside className="sidebar">
+      <Link to="/list" className={`sidebar-item ${isActive('/list') ? 'active' : ''}`}>
+        <img src={assets.order_icon} alt="" />
+        <p>{t("menu")}</p>
+      </Link>
+      <Link to="/add" className={`sidebar-item ${isActive('/add') ? 'active' : ''}`}>
+        <img src={assets.add_icon} alt="" />
+        <p>{t("addItem")}</p>
+      </Link>
+      <Link to="/orders" className={`sidebar-item ${isActive('/orders') ? 'active' : ''}`}>
+        <img src={assets.order_icon} alt="" />
+        <p>{t("orders")}</p>
+      </Link>
+      {role !== 'restaurantOwner' && (
+        <div className="sidebar-note">
+          <p>{t("adminView")}</p>
+        </div>
+      )}
     </aside>
   )
 }

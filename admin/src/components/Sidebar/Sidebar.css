@@ -1,97 +1,44 @@
-/* Container */
-.sidebar.admin-sidebar{
-  width: var(--sidebar-width);
-  min-height: calc(100vh - var(--nav-height));
-  border-right: 1.5px solid var(--border-color);
-  background: linear-gradient(180deg, var(--nav-color-one), transparent 30%);
-  font-size: max(1vw, 11px);
+.sidebar{
   position: fixed;
   top: var(--nav-height);
   left: 0;
-  overflow-y: auto;
-  padding-bottom: 24px;
-}
-
-/* Header */
-.sidebar-header{
-  text-align: center;
-  padding: 18px 18%;
-  border-bottom: 1px solid var(--border-color);
-}
-.sidebar-title{
-  font-weight: 900;
-  color: var(--light-text);
-  letter-spacing: .4px;
-}
-
-/* Options */
-.sidebar-options{
-  padding-top: 16px;
-  padding-left: 18%;
-  padding-right: 8%;
+  height: calc(100vh - var(--nav-height));
+  width: var(--sidebar-width);
+  border-right: 1px solid var(--panel-border);
+  background: var(--panel-color);
+  padding: 18px 12px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  box-shadow: 8px 0 24px rgba(0,0,0,0.12);
 }
 
-.sidebar-option{
+.sidebar-item{
   display: flex;
   align-items: center;
   gap: 12px;
+  padding: 12px 12px;
+  border-radius: 12px;
+  color: var(--text-primary);
+  transition: all .2s ease;
+  font-weight: 700;
+}
+.sidebar-item img{
+  width: 22px;
+  height: 22px;
+}
+.sidebar-item:hover{
+  background: rgba(255,255,255,0.05);
+}
+.sidebar-item.active{
+  background: linear-gradient(120deg, rgba(255,122,95,0.18), rgba(139,92,246,0.15));
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+}
+
+.sidebar-note{
+  margin-top: auto;
   padding: 10px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  text-decoration: none;
-  color: var(--light-text);
-  border: 1px solid transparent;
-  transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .05s ease;
-}
-
-.sidebar-option img{
-  width: 18px;
-  height: 18px;
-}
-
-.sidebar-option:hover{
-  background: rgba(255,255,255,0.06);
-  border-color: var(--border-color);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.10);
-}
-
-.sidebar-option.active{
-  background-color: var(--sidebar);
-  border-color: tomato;
-  box-shadow: 0 3px 12px rgba(255,99,71,0.18);
-}
-
-/* Text responsiveness */
-@media (max-width: 900px) {
-  .sidebar-option p{
-    display: none;
-  }
-  .sidebar-header{ padding: 14px 12px; }
-  .sidebar-options{ padding-left: 12px; padding-right: 12px; }
-}
-
-/* Keep legacy styles (for compatibility if other parts reference .sidebar) */
-.sidebar{
-  border-top: 0;
-}
-
-/* Màu chữ theo theme */
-:root .sidebar-option p{ color: #fff; }
-.lightcolors .sidebar-option p{ color: #111; }
-
-/* Icon theo theme: dark -> trắng, light -> giữ nguyên */
-:root .sidebar-option img{
-filter: brightness(0) invert(1) contrast(105%);
-}
-.lightcolors .sidebar-option img{
-filter: none;
-}
-
-/* Trạng thái active/hover vẫn giữ icon trắng trong dark */
-:root .sidebar-option.active img,
-:root .sidebar-option:hover img{
-filter: brightness(0) invert(1) contrast(105%);
+  color: var(--text-secondary);
+  font-size: 13px;
 }
