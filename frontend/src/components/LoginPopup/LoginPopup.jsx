@@ -5,7 +5,8 @@ import { StoreContext } from "../../context/StoreContext";
 import axios from "axios";
 
 const LoginPopup = ({ setShowLogin }) => {
-  const { url, setToken } = useContext(StoreContext);
+  const { url, setToken, lang, setUserName } = useContext(StoreContext);
+  const t = (vi, en) => (lang === "vi" ? vi : en);
 
   const [currState, setCurrState] = useState("Login");
   const [data, setData] = useState({
@@ -15,9 +16,8 @@ const LoginPopup = ({ setShowLogin }) => {
   });
 
   const onChangeHandler = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    setData((data) => ({ ...data, [name]: value }));
+    const { name, value } = event.target;
+    setData((prev) => ({ ...prev, [name]: value }));
   };
 
   const onLogin = async (event) => {
@@ -32,11 +32,14 @@ const LoginPopup = ({ setShowLogin }) => {
     const response = await axios.post(newUrl, data);
 
     if (response.data.success) {
+      const name = response.data.name || data.name || "";
       setToken(response.data.token);
+      setUserName?.(name);
       localStorage.setItem("token", response.data.token);
+      localStorage.setItem("userName", name);
       setShowLogin(false);
     } else {
-      alert(res.data.message);
+      alert(response.data.message);
     }
   };
 
@@ -44,23 +47,21 @@ const LoginPopup = ({ setShowLogin }) => {
     <div className="login-popup">
       <form onSubmit={onLogin} className="login-popup-container">
         <div className="login-popup-title">
-          <h2>{currState}</h2>
+          <h2>{currState === "Login" ? t("Đăng nhập", "Login") : t("Đăng ký", "Sign Up")}</h2>
           <img
             onClick={() => setShowLogin(false)}
             src={assets.cross_icon}
-            alt=""
+            alt="close"
           />
         </div>
         <div className="login-popup-inputs">
-          {currState === "Login" ? (
-            <></>
-          ) : (
+          {currState === "Login" ? null : (
             <input
               name="name"
               onChange={onChangeHandler}
               value={data.name}
               type="text"
-              placeholder="Your name"
+              placeholder={t("Tên của bạn", "Your name")}
               required
             />
           )}
@@ -69,7 +70,7 @@ const LoginPopup = ({ setShowLogin }) => {
             onChange={onChangeHandler}
             value={data.email}
             type="email"
-            placeholder="Your email"
+            placeholder="you@example.com"
             required
           />
           <input
@@ -77,29 +78,32 @@ const LoginPopup = ({ setShowLogin }) => {
             onChange={onChangeHandler}
             value={data.password}
             type="password"
-            placeholder="Password"
+            placeholder={t("Mật khẩu", "Password")}
             required
           />
         </div>
         <button type="submit">
-          {currState === "Sign Up" ? "Create account" : "Login"}
+          {currState === "Sign Up" ? t("Tạo tài khoản", "Create account") : t("Đăng nhập", "Login")}
         </button>
         <div className="login-popup-condition">
           <input type="checkbox" required />
           <p className="continuee">
-            By continuing, i agree to the terms of use & privacy policy
+            {t(
+              "Tiếp tục đồng nghĩa với việc bạn đồng ý điều khoản và chính sách.",
+              "By continuing, you agree to the terms of use & privacy policy."
+            )}
           </p>
         </div>
         <div className="login-switch">
           {currState === "Login" ? (
             <p>
-              You Do Not Have An Account Yet?{" "}
-              <span onClick={() => setCurrState("Sign Up")}>CLICK HERE</span>
+              {t("Chưa có tài khoản?", "You do not have an account?")}{" "}
+              <span onClick={() => setCurrState("Sign Up")}>{t("ĐĂNG KÝ", "SIGN UP")}</span>
             </p>
           ) : (
             <p>
-              Already have an Account?{" "}
-              <span onClick={() => setCurrState("Login")}>LOGIN HERE</span>
+              {t("Đã có tài khoản?", "Already have an account?")}{" "}
+              <span onClick={() => setCurrState("Login")}>{t("ĐĂNG NHẬP", "LOGIN HERE")}</span>
             </p>
           )}
         </div>

@@ -1,14 +1,22 @@
 import axios from "axios";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, useCallback } from "react";
 
 export const StoreContext = createContext(null)
 
 const StoreContextProvider = (props) => {
 
     const [cartItems, setCartItems] = useState({});
-    const url = "https://hangry-backend.onrender.com"
+    const url = import.meta.env.VITE_API_URL || "http://localhost:5000";
     const [token,setToken] = useState("")
+    const [userName, setUserName] = useState(
+      (typeof window !== "undefined" && localStorage.getItem("userName")) || ""
+    );
     const [food_list,setFoodList] = useState([])
+    const [cities, setCities] = useState([])
+    const [restaurants, setRestaurants] = useState([])
+    const [selectedCity, setSelectedCity] = useState("all")
+    const [selectedRestaurant, setSelectedRestaurant] = useState("all")
+    const [lang, setLang] = useState("vi")
 
 
     const addToCart = async (itemId) => {
@@ -36,16 +44,41 @@ const StoreContextProvider = (props) => {
         {
             if (cartItems[item] > 0) {
                 let itemInfo = food_list.find((product) => product._id === item)
-                totalAmount += itemInfo.price * cartItems[item];
+                if (itemInfo?.price) {
+                    totalAmount += itemInfo.price * cartItems[item];
+                }
             }
         }
         return totalAmount;
     }
 
-    const fetchFoodList = async () => {
-        const response = await axios.get(url+"/api/food/list");
-        setFoodList(response.data.data)
-    }
+    const fetchFoodList = useCallback(async (restaurantId, cityId) => {
+        const params = {};
+        if (restaurantId && restaurantId !== "all") params.restaurantId = restaurantId;
+        else if (cityId && cityId !== "all") params.cityId = cityId;
+        const response = await axios.get(url+"/api/food/list", { params });
+        setFoodList(response.data.data || [])
+    }, [url]);
+
+    const fetchCities = useCallback(async () => {
+        const res = await axios.get(url + "/api/city/list");
+        const list = res.data?.data || [];
+        setCities([{ _id: "all", name: "all" }, ...list]);
+        if (!selectedCity) {
+            setSelectedCity("all");
+        }
+    }, [url, selectedCity]);
+
+    const fetchRestaurants = useCallback(async (cityId) => {
+        const params = {};
+        if (cityId && cityId !== "all") params.cityId = cityId;
+        const res = await axios.get(url + "/api/restaurant/list", { params });
+        const list = res.data?.data || [];
+        const withAll = [{ _id: "all", name: "all" }, ...list];
+        setRestaurants(withAll);
+        const found = withAll.find(r => r._id === selectedRestaurant);
+        if (!found) setSelectedRestaurant("all");
+    }, [url, selectedRestaurant]);
 
     const loadCartData = async (token) => {
         const response = await axios.post(url+"/api/cart/get",{},{headers:{token}});
@@ -55,14 +88,25 @@ const StoreContextProvider = (props) => {
 
     useEffect(()=>{
         async function loadData() {
-            await fetchFoodList();
+            await fetchCities();
+            await fetchRestaurants(selectedCity);
             if (localStorage.getItem("token")) {
                 setToken(localStorage.getItem("token"));
+                const cachedName = localStorage.getItem("userName") || "";
+                if (cachedName) setUserName(cachedName);
                 await loadCartData(localStorage.getItem("token"));
             }
         }
         loadData();
     },[])
+
+    useEffect(() => {
+        fetchRestaurants(selectedCity);
+    }, [selectedCity, fetchRestaurants]);
+
+    useEffect(() => {
+        fetchFoodList(selectedRestaurant, selectedCity);
+    }, [selectedRestaurant, selectedCity, fetchFoodList]);
 
 
     const contextValue = {
@@ -74,7 +118,17 @@ const StoreContextProvider = (props) => {
         getTotalCartAmount,
         url,
         token,
-        setToken
+        setToken,
+        userName,
+        setUserName,
+        cities,
+        restaurants,
+        selectedCity,
+        setSelectedCity,
+        selectedRestaurant,
+        setSelectedRestaurant,
+        lang,
+        setLang,
     }
 
     return (

@@ -6,7 +6,7 @@
 
 /* Kích thước rộng rãi hơn một chút */
 .footer{
-  padding: 28px 8vw 26px;
+  padding: 28px 0 26px;
   margin-top: 48px;
   border-top: 1px solid rgba(255,255,255,.06);
 }
@@ -14,13 +14,28 @@
 /* Grid 3 cột */
 .footer-content{
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 32px;
   align-items: start;
+  max-width: 1250px;
+  width: 94%;
+  margin: 0 auto;
 }
 
 /* Cột */
-.footer-col{ display: flex; flex-direction: column; gap: 8px; }
+.footer-col{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.footer-col:nth-child(2){
+  align-items: center;
+  text-align: center;
+}
+.footer-col:last-child{
+  align-items: flex-end;
+  text-align: right;
+}
 
 .footer-logo{
   width: 132px; height: auto; display: block;
@@ -59,7 +74,9 @@
 .footer-divider{
   border: 0; height: 1px;
   background: rgba(255,255,255,.08);
-  margin: 16px 0 10px;
+  max-width: 1250px;
+  width: 94%;
+  margin: 16px auto 10px;
 }
 .footer-copy{
   margin: 0; text-align: center; color: #bfc3c9; font-size: 12px;

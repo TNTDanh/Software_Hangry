@@ -13,7 +13,9 @@ const Cart = () => {
     getTotalCartAmount,
     url,
     token,
+    lang,
   } = useContext(StoreContext);
+  const t = (vi, en) => (lang === "vi" ? vi : en);
 
   const navigate = useNavigate();
   const [showLogin, setShowLogin] = useState(false);
@@ -25,45 +27,49 @@ const Cart = () => {
   };
 
   const subtotal = Number(getTotalCartAmount?.()) || 0;
+  const formatPrice = (amount) => {
+    const vnd = Number(amount) || 0;
+    if (lang === "vi") return new Intl.NumberFormat("vi-VN").format(vnd) + " ₫";
+    const usd = vnd / 24000;
+    return `$${usd.toFixed(2)}`;
+  };
 
   return (
     <div className="cart">
       <div className="cart-items">
         <div className="cart-items-title">
-          <p>Items</p>
-          <p>Title</p>
-          <p>Price</p>
-          <p>Quantity</p>
-          <p>Total</p>
-          <p>Cancel</p>
+          <p>{t("Món", "Items")}</p>
+          <p>{t("Tên", "Title")}</p>
+          <p>{t("Giá", "Price")}</p>
+          <p>{t("Số lượng", "Quantity")}</p>
+          <p>{t("Thành tiền", "Total")}</p>
+          <p>{t("Xóa", "Remove")}</p>
         </div>
         <br />
         <hr />
         {food_list.map((item) => {
           if (cartItems[item._id] > 0) {
-            const imgSrc = item?.image
-              ? url + "/images/" + item.image
-              : "/header_img.png";
-
+            const imgSrc = item?.image ? url + "/images/" + item.image : "/header_img.png";
+            const name = lang === "vi" && item.name ? item.name : item.nameEn || item.name;
             return (
               <div key={item._id}>
                 <div className="cart-items-title cart-items-item">
                   <img
                     src={imgSrc}
-                    alt={item.name || ""}
+                    alt={name || ""}
                     referrerPolicy="no-referrer"
                     onError={(e) => {
                       e.currentTarget.src = "/header_img.png";
                     }}
                   />
-                  <p>{item.name}</p>
-                  <p>${item.price}</p>
+                  <p>{name}</p>
+                  <p>{formatPrice(item.price)}</p>
 
                   <p>
                     <button
                       className="qty-btn"
                       onClick={() => removeFromCart(item._id)}
-                      aria-label="Decrease quantity"
+                      aria-label={t("Giảm số lượng", "Decrease quantity")}
                     >
                       −
                     </button>
@@ -73,26 +79,26 @@ const Cart = () => {
                     <button
                       className="qty-btn"
                       onClick={() => addToCart(item._id)}
-                      aria-label="Increase quantity"
+                      aria-label={t("Tăng số lượng", "Increase quantity")}
                     >
                       +
                     </button>
                   </p>
 
-                  <p>${item.price * cartItems[item._id]}</p>
+                  <p>{formatPrice(item.price * cartItems[item._id])}</p>
 
                   <p
                     onClick={() => {
-                      if (window.confirm("Remove this item from your cart?")) {
+                      if (window.confirm(t("Xóa món này khỏi giỏ?", "Remove this item from your cart?"))) {
                         removeAllOfItem(item._id);
                       }
                     }}
                     className="cross"
                     role="button"
-                    aria-label="Remove item"
-                    title="Remove item"
+                    aria-label={t("Xóa món", "Remove item")}
+                    title={t("Xóa món", "Remove item")}
                   >
-                    Remove 🗑️
+                    {t("Xóa", "Remove")}
                   </p>
                 </div>
                 <hr />
@@ -105,21 +111,21 @@ const Cart = () => {
 
       <div className="cart-bottom">
         <div className="cart-total">
-          <h2>Cart Totals</h2>
+          <h2>{t("Tổng đơn", "Cart Totals")}</h2>
           <div>
             <div className="cart-total-details">
-              <p>Subtotal</p>
-              <p>${subtotal}</p>
+              <p>{t("Tạm tính", "Subtotal")}</p>
+              <p>{formatPrice(subtotal)}</p>
             </div>
             <hr />
             <div className="cart-total-details">
-              <p>Delivery Fee</p>
-              <p>${subtotal === 0 ? 0 : 2}</p>
+              <p>{t("Phí giao", "Delivery Fee")}</p>
+              <p>{formatPrice(subtotal === 0 ? 0 : 20000)}</p>
             </div>
             <hr />
             <div className="cart-total-details">
-              <b>Total</b>
-              <b>${subtotal === 0 ? 0 : subtotal + 2}</b>
+              <b>{t("Tổng", "Total")}</b>
+              <b>{formatPrice(subtotal === 0 ? 0 : subtotal + 20000)}</b>
             </div>
           </div>
 
@@ -127,7 +133,7 @@ const Cart = () => {
             <button
               onClick={() => {
                 if (subtotal === 0) {
-                  alert("Your cart is empty. Please add some items before checking out.");
+                  alert(t("Giỏ hàng trống, hãy thêm món trước khi thanh toán.", "Your cart is empty. Please add some items before checking out."));
                   return;
                 }
                 if (!token) {
@@ -136,15 +142,15 @@ const Cart = () => {
                 }
                 navigate("/order");
               }}
-              title="Order Payment"
+              title={t("Thanh toán", "Order Payment")}
             >
-              PROCEED TO CHECKOUT
+              {t("Thanh toán", "Proceed to checkout")}
             </button>
             <button
               onClick={() => navigate("/#explore-menu")}
-              title="Order More"
+              title={t("Mua thêm", "Order More")}
             >
-              ORDER MORE
+              {t("Mua thêm", "Order More")}
             </button>
           </div>
         </div>
@@ -152,10 +158,10 @@ const Cart = () => {
         <div className="cart-promocode">
           <div>
             <p className="promocodep">
-              😋 Thanks for letting Hangry App feed your hunger!
+              🍽️ {t("Cảm ơn bạn đã chọn Hangry!", "Thanks for letting Hangry feed you!")}
             </p>
             <div className="cart-promocode-input">
-              <p>Kick back and relax — deliciousness is on the way 🚗💨</p>
+              <p>{t("Thưởng thức thôi, đồ ăn đang trên đường tới.", "Kick back and relax—deliciousness is on the way.")}</p>
             </div>
           </div>
         </div>

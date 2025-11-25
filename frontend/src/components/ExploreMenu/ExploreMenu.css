@@ -8,10 +8,49 @@
   margin: 0 0 8px 0;
   color: var(--light-text);
   font-weight: 900;
+  font-family: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
+  letter-spacing: -0.2px;
 }
 .explore-sub{
   margin: 0 0 14px 0;
   color: var(--light-text-secondary);
+  font-family: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.location-row{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(180px, 1fr));
+  gap: 12px;
+  margin: 10px 0 14px;
+}
+.select-box{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.select-box label{
+  font-weight: 800;
+  color: var(--light-text);
+  font-family: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.select-box select{
+  height: 44px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: var(--body-color);
+  color: var(--light-text);
+  box-shadow: var(--shadow-soft);
+  appearance: none;
+  outline: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.41.59L6 5.17 10.59.59 12 2 6 8 0 2z' fill='%23ff7256'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+select:focus{
+  border-color: var(--brand-1);
+  box-shadow: 0 0 0 3px rgba(255,114,86,0.25);
 }
 
 /* Grid danh mục */
@@ -75,6 +114,8 @@
 .item_menu{
   color: var(--light-text);
   font-weight: 800;
+  font-family: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
+  letter-spacing: -0.1px;
 }
 
 /* Divider đồng bộ */
@@ -103,4 +144,10 @@
   }
   .thumb-wrap{ width: 86px; height: 86px; }
   .thumb{ width: 78px; height: 78px; }
+}
+
+@media (max-width: 700px){
+  .location-row{
+    grid-template-columns: 1fr;
+  }
 }

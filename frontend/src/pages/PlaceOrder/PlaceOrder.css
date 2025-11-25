@@ -4,6 +4,7 @@
   grid-template-columns: 1.2fr 1fr;
   gap: 16px;
   padding: 16px;
+  min-height: calc(100vh - 220px); /* giữ footer ở dưới khi nội dung ít */
   box-sizing: border-box;
 }
 
@@ -65,6 +66,14 @@
   border-color: tomato;
   box-shadow: 0 0 0 3px rgba(255,99,71,0.18);
 }
+/* Autofill fix to keep same background/text color */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus{
+  -webkit-text-fill-color: var(--light-text, #111);
+  box-shadow: 0 0 0 1000px var(--body-color, #fff) inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
 
 /* Summary box with subtle rounded inner border */
 .summary-box{
@@ -109,6 +118,54 @@
   box-shadow: 0 10px 22px rgba(255,99,71,0.42);
 }
 .primary-btn:active{ transform: translateY(1px); }
+
+.pill-group{
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.pill{
+  border: 1px solid var(--border-color, #e2e2e2);
+  background: #fff;
+  color: #111;
+  padding: 10px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: background-color .2s ease, color .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.pill.active{
+  background: #fff;
+  color: #111;
+  border-color: var(--brand-1, #ff7256);
+  box-shadow: 0 4px 12px rgba(255,114,86,0.25);
+}
+
+.promo-field .promo-input-row{
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+.promo-input-row input{
+  flex: 1;
+  height: 44px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color, #e2e2e2);
+}
+.promo-input-row button{
+  border: none;
+  background: linear-gradient(180deg, #111, #222);
+  color: #fff;
+  padding: 0 16px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.promo-hint{
+  margin: 6px 0 0 2px;
+  color: #6b7280;
+  font-size: 14px;
+}
 
 /* Promo card dưới nút */
 .promo-card{

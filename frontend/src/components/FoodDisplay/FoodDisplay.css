@@ -9,15 +9,24 @@
   font-size: max(2.2vw, 22px);
 }
 
-/* Grid danh sách món – đồng bộ khoảng cách */
+.no-items{
+  color: var(--light-text-secondary);
+  margin: 12px 0;
+}
+
 .food-display-list{
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 20px 24px;         /* row-gap / column-gap */
+  gap: 20px 24px;
   margin-top: 14px;
 }
 
-/* Responsive */
+.food-card{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 @media (max-width: 900px){
   .food-display-list{
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
