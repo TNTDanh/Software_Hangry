@@ -12,11 +12,20 @@ import userRouter from "./routes/userRoute.js"
 import 'dotenv/config'
 import cartRouter from "./routes/cartRoute.js"
 import orderRouter from "./routes/orderRoute.js"
+import cityRouter from "./routes/cityRoute.js"
+import restaurantRouter from "./routes/restaurantRoute.js"
+import promotionRouter from "./routes/promotionRoute.js"
+import reviewRouter from "./routes/reviewRoute.js"
+import supportRouter from "./routes/supportRoute.js"
+import stripeWebhookRouter from "./routes/stripeRoute.js"
 
 
 // app config
 const app = express()
 const port = process.env.PORT || 4000
+
+// Stripe webhook: must be raw before json parser
+app.use("/api/stripe", express.raw({ type: "application/json" }), stripeWebhookRouter)
 
 // CORS: use CLIENT_URL env (comma-separated) or fallback to common dev origins
 const rawOrigins = process.env.CLIENT_URL || "http://localhost:8081,http://127.0.0.1:8081,http://localhost:3000";
@@ -47,6 +56,11 @@ app.use("/images", express.static("uploads", {
 app.use("/api/user", userRouter)
 app.use("/api/cart", cartRouter)
 app.use("/api/order", orderRouter)
+app.use("/api/city", cityRouter)
+app.use("/api/restaurant", restaurantRouter)
+app.use("/api/promo", promotionRouter)
+app.use("/api/review", reviewRouter)
+app.use("/api/support", supportRouter)
 
 app.get("/", (req, res) => {
   res.send("API Working")
