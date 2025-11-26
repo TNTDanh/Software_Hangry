@@ -25,7 +25,10 @@ const authMiddleware = async (req, res, next) => {
       return res.status(403).json({ success: false, message: "Account is inactive" });
     }
 
-    req.body.userId = token_decode.id;
+    // Preserve incoming userId (for admin actions) but default to auth user
+    if (!req.body.userId) {
+      req.body.userId = token_decode.id;
+    }
     req.user = {
       id: token_decode.id,
       role: token_decode.role || dbUser.role || "user",

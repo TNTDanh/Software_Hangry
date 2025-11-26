@@ -123,6 +123,18 @@ export const listUsers = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const { userId, role, active } = req.body;
+    if (!userId) return res.status(400).json({ success: false, message: "Missing userId" });
+
+    const target = await userModel.findById(userId);
+    if (!target) return res.status(404).json({ success: false, message: "User not found" });
+
+    // Không cho đổi vai trò hoặc tắt admin để tránh tự khoá hệ thống
+    if (target.role === "admin") {
+      return res
+        .status(409)
+        .json({ success: false, message: "Admin accounts cannot be edited" });
+    }
+
     const update = {};
     const willChangeActive = typeof active === "boolean";
     if (role) update.role = role;
@@ -148,10 +160,43 @@ export const updateUser = async (req, res) => {
 export const removeUser = async (req, res) => {
   try {
     const { userId } = req.body;
+    if (!userId) return res.status(400).json({ success: false, message: "Missing userId" });
+
+    const user = await userModel.findById(userId);
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    if (user.role === "admin") {
+      return res.status(409).json({ success: false, message: "Cannot delete admin accounts" });
+    }
+
+    const [orderCount, reviewCount, ticketCount, ownerRestaurantCount] = await Promise.all([
+      (await import("../models/orderModel.js")).default.countDocuments({ userId }),
+      (await import("../models/reviewModel.js")).default.countDocuments({ userId }),
+      (await import("../models/supportTicketModel.js")).default.countDocuments({ userId }),
+      user.role === "restaurantOwner"
+        ? (await import("../models/restaurantModel.js")).default.countDocuments({
+            _id: { $in: user.restaurantIds || [] },
+          })
+        : Promise.resolve(0),
+    ]);
+
+    if (orderCount || reviewCount || ticketCount || ownerRestaurantCount) {
+      return res.status(409).json({
+        success: false,
+        message: "Cannot delete user while related data exists",
+        details: {
+          orders: orderCount,
+          reviews: reviewCount,
+          supportTickets: ticketCount,
+          restaurantsOwned: ownerRestaurantCount,
+        },
+      });
+    }
+
     await userModel.findByIdAndDelete(userId);
     res.json({ success: true, message: "Removed" });
   } catch (error) {
     console.log(error);
-    res.json({ success: false, message: "Error" });
+    res.status(500).json({ success: false, message: "Error" });
   }
 };
