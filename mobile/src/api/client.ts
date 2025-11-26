@@ -5,7 +5,7 @@ import { useAuthStore } from "../../lib/store/auth";
 export const API_URL =
   (Constants.expoConfig?.extra as any)?.apiUrl ||
   process.env.EXPO_PUBLIC_API_URL?.trim() ||
-  "http://192.168.9.14:5000";
+  "http://172.20.10.2:5000";;
 
 export type FoodDto = {
   _id: string;
