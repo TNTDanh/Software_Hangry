@@ -1,4 +1,9 @@
 import restaurantModel from "../models/restaurantModel.js";
+import foodModel from "../models/foodModel.js";
+import orderModel from "../models/orderModel.js";
+import promotionModel from "../models/promotionModel.js";
+import reviewModel from "../models/reviewModel.js";
+import userModel from "../models/userModel.js";
 import { filterForOwner } from "../middleware/access.js";
 
 const addRestaurant = async (req, res) => {
@@ -95,4 +100,57 @@ const toggleRestaurant = async (req, res) => {
   }
 };
 
-export { addRestaurant, listRestaurants, toggleRestaurant };
+const deleteRestaurant = async (req, res) => {
+  try {
+    const id = req.params.id || req.body.id;
+    if (!id) return res.status(400).json({ success: false, message: "Missing id" });
+
+    if (req.user?.role === "restaurantOwner") {
+      const allowed = req.user.restaurantIds || [];
+      if (!allowed.find((rid) => rid.toString() === id.toString())) {
+        return res.status(403).json({ success: false, message: "Not allowed for this restaurant" });
+      }
+    }
+
+    const [foodCount, orderCount, promoCount, reviewCount, ownerCount] = await Promise.all([
+      foodModel.countDocuments({ restaurantId: id }),
+      orderModel.countDocuments({
+        $or: [
+          { restaurantId: id },
+          { "items.restaurantId": id },
+          { "subOrders.restaurantId": id },
+          { "statusTimeline.restaurantId": id },
+        ],
+      }),
+      promotionModel.countDocuments({ restaurantId: id }),
+      reviewModel.countDocuments({ restaurantId: id }),
+      userModel.countDocuments({ restaurantIds: id }),
+    ]);
+
+    if (foodCount || orderCount || promoCount || reviewCount || ownerCount) {
+      return res.status(409).json({
+        success: false,
+        message: "Cannot delete restaurant while related data exists",
+        details: {
+          foods: foodCount,
+          orders: orderCount,
+          promotions: promoCount,
+          reviews: reviewCount,
+          owners: ownerCount,
+        },
+      });
+    }
+
+    const deleted = await restaurantModel.findByIdAndDelete(id);
+    if (!deleted) {
+      return res.status(404).json({ success: false, message: "Restaurant not found" });
+    }
+
+    return res.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: "Error" });
+  }
+};
+
+export { addRestaurant, listRestaurants, toggleRestaurant, deleteRestaurant };

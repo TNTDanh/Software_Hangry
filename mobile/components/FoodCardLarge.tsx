@@ -17,7 +17,10 @@ export default function FoodCardLarge({ item }: { item: FoodDto }) {
   const imgSrc = resolveImageSource(item.image);
 
   const name = useMemo(
-    () => (lang === "vi" ? item?.name || item?.nameEn : item?.nameEn || item?.name || "Unnamed"),
+    () =>
+      lang === "vi"
+        ? item?.name || item?.nameEn
+        : item?.nameEn || item?.name || "Unnamed",
     [item?.name, item?.nameEn, lang]
   );
   const desc = useMemo(
@@ -35,7 +38,10 @@ export default function FoodCardLarge({ item }: { item: FoodDto }) {
     [item?.restaurantName, item?.restaurantNameEn, lang]
   );
   const address = useMemo(
-    () => (lang === "vi" ? item?.address || item?.addressEn || "" : item?.addressEn || item?.address || ""),
+    () =>
+      lang === "vi"
+        ? item?.address || item?.addressEn || ""
+        : item?.addressEn || item?.address || "",
     [item?.address, item?.addressEn, lang]
   );
   const eta = item?.etaMinutes ? `${item.etaMinutes}’` : undefined;
@@ -65,14 +71,30 @@ export default function FoodCardLarge({ item }: { item: FoodDto }) {
           referrerPolicy="no-referrer"
         />
       ) : (
-        <View style={{ width: "100%", aspectRatio: 16 / 9, backgroundColor: "#f3f3f3" }} />
+        <View
+          style={{
+            width: "100%",
+            aspectRatio: 16 / 9,
+            backgroundColor: "#f3f3f3",
+          }}
+        />
       )}
 
       <View style={{ padding: 14, gap: 8, minHeight: 160 }}>
-        <Text numberOfLines={1} style={{ fontFamily: FontFamilyBold, fontSize: 16, color: palette.text }}>
+        <Text
+          numberOfLines={1}
+          style={{
+            fontFamily: FontFamilyBold,
+            fontSize: 16,
+            color: palette.text,
+          }}
+        >
           {name}
         </Text>
-        <Text numberOfLines={2} style={{ color: palette.textSecondary, minHeight: 36 }}>
+        <Text
+          numberOfLines={2}
+          style={{ color: palette.textSecondary, minHeight: 36 }}
+        >
           {desc}
         </Text>
 
@@ -94,25 +116,44 @@ export default function FoodCardLarge({ item }: { item: FoodDto }) {
           )}
         </View>
 
-        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 6 }}>
-          <View style={{ gap: 4 }}>
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-              <Text style={{ fontFamily: FontFamilyBold, color: BrandColors.primary }}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginTop: 6,
+          }}
+        >
+          <View style={{ gap: 4, alignItems: "flex-end" }}>
+            <View
+              style={{ flexDirection: "row", alignItems: "center", gap: 6 }}
+            >
+              <Text
+                style={{
+                  fontFamily: FontFamilyBold,
+                  color: BrandColors.primary,
+                }}
+              >
                 {formatMoney(Number(item?.price || 0))}
               </Text>
               {item.ratingAvg ? (
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                <View
+                  style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
+                >
                   <Ionicons name="star" size={14} color={BrandColors.primary} />
-                  <Text style={{ color: BrandColors.primary }}>{item.ratingAvg.toFixed(1)}</Text>
+                  <Text style={{ color: BrandColors.primary }}>
+                    {item.ratingAvg.toFixed(1)}
+                  </Text>
                 </View>
               ) : null}
             </View>
           </View>
+
           <TouchableOpacity
             onPress={() =>
               addItem({
                 id: item._id,
-                name: item.name || item.nameEn || name,
+                name: item.name ?? item.nameEn ?? name ?? "Unnamed",
                 nameEn: item.nameEn,
                 price: item.price,
                 image: item.image,
@@ -128,7 +169,9 @@ export default function FoodCardLarge({ item }: { item: FoodDto }) {
               backgroundColor: BrandColors.primaryStrong,
             }}
           >
-            <Text style={{ color: "#fff", fontFamily: FontFamilyBold }}>{t("add")}</Text>
+            <Text style={{ color: "#fff", fontFamily: FontFamilyBold }}>
+              {t("add")}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
