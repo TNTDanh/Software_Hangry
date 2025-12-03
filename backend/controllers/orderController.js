@@ -1,6 +1,7 @@
 import orderModel from "../models/orderModel.js";
 import userModel from "../models/userModel.js";
 import restaurantModel from "../models/restaurantModel.js";
+import mongoose from "mongoose";
 import Stripe from "stripe";
 import { filterForOwner } from "../middleware/access.js";
 
@@ -473,6 +474,275 @@ const updateDeliveryPhase = async (req, res) => {
   }
 };
 
+// Revenue metrics for admin/owner dashboard
+const revenueMetrics = async (req, res) => {
+  try {
+    const { restaurantId, from, to } = req.query || {};
+
+    // only allow delivered orders to count as revenue
+    const deliveredMatch = {
+      $or: [{ deliveryPhase: "delivered" }, { status: "Delivered" }],
+    };
+
+    // date filter uses "date" field stored on order
+    const dateFilter = {};
+    if (from) dateFilter.$gte = new Date(from);
+    if (to) dateFilter.$lte = new Date(to);
+    const dateMatch = Object.keys(dateFilter).length ? { date: dateFilter } : {};
+
+    // Owner scope
+    const allowedRestaurants =
+      req.user?.role === "restaurantOwner"
+        ? (req.user.restaurantIds || []).map((id) => id.toString())
+        : null;
+
+    // If owner and no restaurants, block
+    if (req.user?.role === "restaurantOwner" && !allowedRestaurants.length) {
+      return res
+        .status(403)
+        .json({ success: false, message: "No restaurants assigned to this owner" });
+    }
+
+    // build restaurant filter array
+    let scopedRestaurants = [];
+    if (restaurantId) scopedRestaurants.push(restaurantId.toString());
+    if (allowedRestaurants) {
+      scopedRestaurants = scopedRestaurants.length
+        ? scopedRestaurants.filter((r) => allowedRestaurants.includes(r))
+        : [...allowedRestaurants];
+      if (!scopedRestaurants.length) {
+        return res.status(403).json({ success: false, message: "Not allowed for this restaurant" });
+      }
+    }
+    const scopedObjectIds = scopedRestaurants
+      .map((r) => {
+        try {
+          return new mongoose.Types.ObjectId(r);
+        } catch {
+          return null;
+        }
+      })
+      .filter(Boolean);
+    // allow matching both ObjectId and string ids (in case data stored as string)
+    const scopedAnyIds = [...scopedObjectIds, ...scopedRestaurants.filter(Boolean)];
+
+    const matchBase = {
+      ...deliveredMatch,
+      ...dateMatch,
+    };
+    const matchRestaurant = scopedAnyIds.length
+      ? {
+          $or: [
+            { "items.restaurantId": { $in: scopedAnyIds } },
+            { "subOrders.restaurantId": { $in: scopedAnyIds } },
+          ],
+        }
+      : {};
+    const matchItems = { ...matchBase };
+    const matchSubOrders = { ...matchBase };
+
+    if (scopedAnyIds.length) {
+      matchItems["items.restaurantId"] = { $in: scopedAnyIds };
+      matchSubOrders["subOrders.restaurantId"] = { $in: scopedAnyIds };
+    }
+
+    // aggregate items-based revenue
+    const itemsPipeline = [
+      { $match: { ...matchItems, ...matchRestaurant } },
+      { $unwind: "$items" },
+      ...(scopedAnyIds.length
+        ? [{ $match: { "items.restaurantId": { $in: scopedAnyIds } } }]
+        : []),
+      {
+        $group: {
+          _id: "$items.restaurantId",
+          revenue: {
+            $sum: {
+              $multiply: [
+                { $ifNull: ["$items.price", 0] },
+                { $ifNull: ["$items.quantity", 0] },
+              ],
+            },
+          },
+          orders: { $addToSet: "$_id" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          restaurantId: "$_id",
+          revenue: 1,
+          orders: { $size: "$orders" },
+        },
+      },
+    ];
+
+    // aggregate delivery fees per restaurant (if subOrders used)
+    const subOrdersPipeline = [
+      { $match: { ...matchSubOrders, ...matchRestaurant } },
+      { $unwind: "$subOrders" },
+      ...(scopedAnyIds.length
+        ? [{ $match: { "subOrders.restaurantId": { $in: scopedAnyIds } } }]
+        : []),
+      {
+        $group: {
+          _id: "$subOrders.restaurantId",
+          deliveryFee: { $sum: { $ifNull: ["$subOrders.deliveryFee", 0] } },
+          orders: { $addToSet: "$_id" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          restaurantId: "$_id",
+          deliveryFee: 1,
+          orders: { $size: "$orders" },
+        },
+      },
+    ];
+
+    // distinct order count for overall
+    const totalOrdersQuery = orderModel.countDocuments({
+      ...matchBase,
+      ...matchRestaurant,
+    });
+
+    // timeseries (by day) revenue/orders
+    const dayString = {
+      $dateToString: { format: "%Y-%m-%d", date: "$date" },
+    };
+    const itemsTimeseriesPipeline = [
+      { $match: { ...matchItems, ...matchRestaurant } },
+      { $unwind: "$items" },
+      ...(scopedAnyIds.length
+        ? [{ $match: { "items.restaurantId": { $in: scopedAnyIds } } }]
+        : []),
+      {
+        $group: {
+          _id: dayString,
+          revenue: {
+            $sum: {
+              $multiply: [
+                { $ifNull: ["$items.price", 0] },
+                { $ifNull: ["$items.quantity", 0] },
+              ],
+            },
+          },
+          orders: { $addToSet: "$_id" },
+        },
+      },
+    ];
+    const subOrdersTimeseriesPipeline = [
+      { $match: { ...matchSubOrders, ...matchRestaurant } },
+      { $unwind: "$subOrders" },
+      ...(scopedAnyIds.length
+        ? [{ $match: { "subOrders.restaurantId": { $in: scopedAnyIds } } }]
+        : []),
+      {
+        $group: {
+          _id: dayString,
+          deliveryFee: { $sum: { $ifNull: ["$subOrders.deliveryFee", 0] } },
+          orders: { $addToSet: "$_id" },
+        },
+      },
+    ];
+
+    const [itemsAgg, subOrdersAgg, totalOrders] = await Promise.all([
+      orderModel.aggregate(itemsPipeline),
+      orderModel.aggregate(subOrdersPipeline),
+      totalOrdersQuery,
+    ]);
+
+    const [itemsTs, subOrdersTs] = await Promise.all([
+      orderModel.aggregate(itemsTimeseriesPipeline),
+      orderModel.aggregate(subOrdersTimeseriesPipeline),
+    ]);
+
+    // merge per-restaurant data
+    const map = {};
+    itemsAgg.forEach((row) => {
+      const key = row.restaurantId?.toString();
+      if (!key) return;
+      map[key] = {
+        restaurantId: key,
+        revenue: row.revenue || 0,
+        orders: row.orders || 0,
+        deliveryFee: 0,
+      };
+    });
+
+    subOrdersAgg.forEach((row) => {
+      const key = row.restaurantId?.toString();
+      if (!key) return;
+      if (!map[key]) {
+        map[key] = {
+          restaurantId: key,
+          revenue: 0,
+          orders: row.orders || 0,
+          deliveryFee: 0,
+        };
+      }
+      map[key].deliveryFee = (map[key].deliveryFee || 0) + (row.deliveryFee || 0);
+      // orders count stays as-is (itemsAgg already counted unique orders)
+    });
+
+    const restaurants = Object.values(map).map((r) => ({
+      restaurantId: r.restaurantId,
+      revenue: (r.revenue || 0) + (r.deliveryFee || 0),
+      orders: r.orders || 0,
+    }));
+
+    const totalRevenue = restaurants.reduce((sum, r) => sum + Number(r.revenue || 0), 0);
+    const totalOrdersSafe = Number(totalOrders || 0);
+    const avgOrderValue = totalOrdersSafe > 0 ? totalRevenue / totalOrdersSafe : 0;
+
+    // build timeseries map
+    const tsMap = {};
+    const ensureDay = (day) => {
+      if (!tsMap[day]) tsMap[day] = { day, revenue: 0, orderSet: new Set() };
+      return tsMap[day];
+    };
+    itemsTs.forEach((row) => {
+      const day = row._id;
+      if (!day) return;
+      const slot = ensureDay(day);
+      slot.revenue += Number(row.revenue || 0);
+      (row.orders || []).forEach((id) => slot.orderSet.add(String(id)));
+    });
+    subOrdersTs.forEach((row) => {
+      const day = row._id;
+      if (!day) return;
+      const slot = ensureDay(day);
+      slot.revenue += Number(row.deliveryFee || 0);
+      (row.orders || []).forEach((id) => slot.orderSet.add(String(id)));
+    });
+
+    const timeseries = Object.values(tsMap)
+      .map((r) => ({
+        day: r.day,
+        revenue: r.revenue,
+        orders: r.orderSet.size,
+      }))
+      .sort((a, b) => (a.day < b.day ? -1 : a.day > b.day ? 1 : 0));
+
+    return res.json({
+      success: true,
+      data: {
+        summary: {
+          totalRevenue,
+          totalOrders: totalOrdersSafe,
+          avgOrderValue,
+        },
+        restaurants,
+        timeseries,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Error" });
+  }
+};
+
 export {
   placeOrder,
   placeOrderCOD,
@@ -481,4 +751,5 @@ export {
   listOrders,
   updateStatus,
   updateDeliveryPhase,
+  revenueMetrics,
 }
