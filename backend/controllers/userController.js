@@ -1,8 +1,8 @@
 import userModel from "../models/userModel.js";
-import jwt from "jsonwebtoken"
-import bcrypt from "bcrypt"
-import validator from "validator"
-import restaurantModel from "../models/restaurantModel.js"
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import validator from "validator";
+import restaurantModel from "../models/restaurantModel.js";
 
 // login user
 const loginUser = async (req,res) => {
@@ -122,7 +122,7 @@ export const listUsers = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
-    const { userId, role, active } = req.body;
+    const { userId, role, active, restaurantIds, password } = req.body;
     if (!userId) return res.status(400).json({ success: false, message: "Missing userId" });
 
     const target = await userModel.findById(userId);
@@ -139,6 +139,16 @@ export const updateUser = async (req, res) => {
     const willChangeActive = typeof active === "boolean";
     if (role) update.role = role;
     if (willChangeActive) update.active = active;
+    if (Array.isArray(restaurantIds)) {
+      update.restaurantIds = restaurantIds;
+    }
+    if (password) {
+      if (password.length < 8) {
+        return res.status(400).json({ success: false, message: "Password too short" });
+      }
+      const salt = await bcrypt.genSalt(10);
+      update.password = await bcrypt.hash(password, salt);
+    }
 
     const user = await userModel.findByIdAndUpdate(userId, update, { new: true });
 
@@ -195,6 +205,51 @@ export const removeUser = async (req, res) => {
 
     await userModel.findByIdAndDelete(userId);
     res.json({ success: true, message: "Removed" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Error" });
+  }
+};
+
+// Admin create user (e.g., owner) with restaurantIds
+export const adminCreateUser = async (req, res) => {
+  try {
+    const { name, email, password, role = "restaurantOwner", restaurantIds = [], active = true } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ success: false, message: "email and password required" });
+    }
+    if (!validator.isEmail(email)) {
+      return res.status(400).json({ success: false, message: "Invalid email" });
+    }
+    if (password.length < 8) {
+      return res.status(400).json({ success: false, message: "Password must be at least 8 characters" });
+    }
+    const exists = await userModel.findOne({ email });
+    if (exists) {
+      return res.status(409).json({ success: false, message: "User already exists" });
+    }
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = await userModel.create({
+      name,
+      email,
+      password: hashedPassword,
+      role,
+      restaurantIds,
+      active,
+    });
+
+    return res.json({
+      success: true,
+      data: {
+        _id: user._id,
+        email: user.email,
+        role: user.role,
+        restaurantIds: user.restaurantIds || [],
+        active: user.active,
+      },
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ success: false, message: "Error" });

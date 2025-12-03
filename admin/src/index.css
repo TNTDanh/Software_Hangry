@@ -14,6 +14,12 @@
   --shadow-strong: 0 20px 60px rgba(0,0,0,0.35);
   --nav-height: 72px;
   --sidebar-width: 240px;
+  --card-bg: #111522;
+  --card-border: #2c3240;
+  --chip-bg: #1f2430;
+  --chip-active: #ff7a5f;
+  --table-head: #1f2432;
+  --table-row: #161b28;
 }
 
 [data-theme='light'] {
@@ -28,6 +34,12 @@
   --accent: #2563eb;
   --accent-2: #10b981;
   --shadow-strong: 0 12px 32px rgba(0,0,0,0.12);
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --chip-bg: #eef2f7;
+  --chip-active: #2563eb;
+  --table-head: #f3f4f6;
+  --table-row: #ffffff;
 }
 
 *{

@@ -1,5 +1,5 @@
 import express from "express"
-import { loginUser,registerUser, listUsers, updateUser, removeUser } from "../controllers/userController.js"
+import { loginUser,registerUser, listUsers, updateUser, removeUser, adminCreateUser } from "../controllers/userController.js"
 import authMiddleware from "../middleware/auth.js"
 
 const userRouter = express.Router()
@@ -16,5 +16,6 @@ const requireAdmin = (req, res, next) => {
 userRouter.get("/list", authMiddleware, requireAdmin, listUsers)
 userRouter.post("/update", authMiddleware, requireAdmin, updateUser)
 userRouter.post("/remove", authMiddleware, requireAdmin, removeUser)
+userRouter.post("/admin-create", authMiddleware, requireAdmin, adminCreateUser)
 
 export default userRouter;

@@ -23,6 +23,10 @@ const Sidebar = ({ role }) => {
         <img src={assets.order_icon} alt="" />
         <p>{t("orders")}</p>
       </Link>
+      <Link to="/dashboard" className={`sidebar-item ${isActive('/dashboard') ? 'active' : ''}`}>
+        <img src={assets.order_icon} alt="" />
+        <p>{t("dashboard")}</p>
+      </Link>
       {role !== 'restaurantOwner' && (
         <div className="sidebar-note">
           <p>{t("adminView")}</p>

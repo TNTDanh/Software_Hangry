@@ -3,6 +3,8 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
 import Users from './pages/Users'
+import AddRestaurant from './pages/AddRestaurant'
+import AddOwner from './pages/AddOwner'
 import Login from './pages/Login'
 import useAuth from './auth/useAuth.jsx'
 import { ToastContainer } from 'react-toastify'
@@ -43,6 +45,8 @@ export default function App() {
         <div className="page card">
           <Routes>
             <Route path="/users" element={<Users url={apiUrl} />} />
+            <Route path="/restaurants/add" element={<AddRestaurant url={apiUrl} />} />
+            <Route path="/owners/add" element={<AddOwner url={apiUrl} />} />
             <Route path="/" element={<Navigate to="/users" replace />} />
           </Routes>
         </div>
