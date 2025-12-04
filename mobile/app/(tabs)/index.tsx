@@ -23,6 +23,7 @@ export default function HomeScreen() {
   const [foods, setFoods] = useState<FoodDto[]>([]);
   const [filtered, setFiltered] = useState<FoodDto[]>([]);
   const [cat, setCat] = useState<string>("All");
+  const [page, setPage] = useState<number>(1);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -172,17 +173,20 @@ export default function HomeScreen() {
   const onSelectCategory = (key: string) => {
     setCat(key);
     setFiltered(applyFilter(foods, key, restaurant, city));
+    setPage(1);
   };
 
   const onSelectRestaurant = (val: string) => {
     setRestaurant(val);
     setFiltered(applyFilter(foods, cat, val, city));
+    setPage(1);
   };
 
   const onSelectCity = (val: string) => {
     setCity(val);
     setRestaurant("all");
     setFiltered(applyFilter(foods, cat, "all", val));
+    setPage(1);
   };
 
   const onRefresh = async () => {
@@ -206,6 +210,17 @@ export default function HomeScreen() {
       return f;
     });
   }, [filtered, restaurantMetaMap]);
+
+  const PAGE_SIZE = 6;
+  const totalPages = Math.max(1, Math.ceil(displayFoods.length / PAGE_SIZE));
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [totalPages, page]);
+
+  const paginatedFoods = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE;
+    return displayFoods.slice(start, start + PAGE_SIZE);
+  }, [displayFoods, page]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: palette.background }}>
@@ -296,7 +311,42 @@ export default function HomeScreen() {
           <ActivityIndicator style={{ marginTop: 18 }} />
         ) : filtered.length ? (
           <View style={{ marginTop: 14, paddingHorizontal: 16 }}>
-            <FoodCardGrid data={displayFoods} />
+            <FoodCardGrid data={paginatedFoods} />
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 16 }}>
+              <TouchableOpacity
+                disabled={page <= 1}
+                onPress={() => setPage((p) => Math.max(1, p - 1))}
+                style={{
+                  paddingHorizontal: 14,
+                  paddingVertical: 10,
+                  borderRadius: 10,
+                  borderWidth: 1,
+                  borderColor: palette.border,
+                  backgroundColor: palette.card,
+                  opacity: page <= 1 ? 0.5 : 1,
+                }}
+              >
+                <Text style={{ color: palette.text }}>{t("previous") || "Previous"}</Text>
+              </TouchableOpacity>
+              <Text style={{ color: palette.textSecondary }}>
+                {page} / {totalPages}
+              </Text>
+              <TouchableOpacity
+                disabled={page >= totalPages}
+                onPress={() => setPage((p) => Math.min(totalPages, p + 1))}
+                style={{
+                  paddingHorizontal: 14,
+                  paddingVertical: 10,
+                  borderRadius: 10,
+                  borderWidth: 1,
+                  borderColor: palette.border,
+                  backgroundColor: palette.card,
+                  opacity: page >= totalPages ? 0.5 : 1,
+                }}
+              >
+                <Text style={{ color: palette.text }}>{t("next") || "Next"}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         ) : (
           <View style={{ marginTop: 18, alignItems: "center" }}>
